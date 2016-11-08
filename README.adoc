@@ -1,6 +1,6 @@
-= Install the latest Debian package
+= Install the LTS Debian package
 
 This test accesses the apt repository at
-link:https://pkg.jenkins.io/debian[pkg.jenkins.io/debian],
+link:https://pkg.jenkins.io/debian-stable[pkg.jenkins.io/debian-stable],
 downloads the referenced key file, and attempts to install Jenkins inside of
 the `debian:latest` container.

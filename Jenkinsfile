@@ -19,11 +19,11 @@ node('docker') {
             }
 
             stage('Add the apt key') {
-                sh 'wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | apt-key add -'
+                sh 'wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -'
             }
 
             stage('Install Jenkins from apt') {
-                sh 'echo "deb https://pkg.jenkins.io/debian binary/" >> /etc/apt/sources.list'
+                sh 'echo "deb https://pkg.jenkins.io/debian-stable binary/" >> /etc/apt/sources.list'
                 sh 'apt-get update && apt-get install -qy jenkins'
             }
         }
