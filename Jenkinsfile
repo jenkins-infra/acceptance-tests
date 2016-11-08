@@ -1,10 +1,5 @@
 #!/usr/bin/env groovy
 
-/*
- * Making sure that we can follow the steps necessary to install the latest
- * release RPM for redhat/centos machine:
- */
-
 properties([
     [$class: 'jenkins.model.BuildDiscarderProperty',
         strategy: [$class: 'LogRotator', numToKeepStr: '5']],
@@ -19,8 +14,8 @@ node('docker') {
             }
 
             stage('Add the rpm key') {
-                sh 'wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat/jenkins.repo'
-                sh 'rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key'
+                sh 'wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo'
+                sh 'rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key'
             }
 
             stage('Install Jenkins from rpm') {

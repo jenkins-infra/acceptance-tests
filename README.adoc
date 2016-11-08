@@ -1,7 +1,7 @@
-= Install the latest Red Hat RPM
+= Install the LTS Red Hat RPM
 
 This test accesses the rpm repository at
-link:https://pkg.jenkins.io/redhat/[pkg.jenkins.io/redhat],
+link:https://pkg.jenkins.io/redhat-stable/[pkg.jenkins.io/redhat-stable],
 downloads the referenced key file, and attempts to install Jenkins inside of
 the `centos:latest` container.
 
