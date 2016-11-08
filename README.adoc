@@ -5,6 +5,9 @@ This repository contains branches which act as acceptance tests for the Jenkins
 projects infrastructure.
 
 
+*link:https://ci.jenkins.io/job/Infra/job/acceptance-tests/[Acceptance tests on ci.jenkins.io]*
+
+
 == How this repository works
 
 
