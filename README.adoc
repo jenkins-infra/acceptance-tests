@@ -4,3 +4,11 @@ This test accesses the rpm repository at
 link:https://pkg.jenkins.io/redhat/[pkg.jenkins.io/redhat],
 downloads the referenced key file, and attempts to install Jenkins inside of
 the `centos:latest` container.
+
+
+== Motivation
+
+With
+link:https://issues.jenkins-ci.org/browse/INFRA-973[INFRA-973]
+we introduced a regression by provisioning the incorrect key file into our
+redhat package repositories. This test should help alert us before our users do
