@@ -8,7 +8,7 @@
 properties([
     [$class: 'jenkins.model.BuildDiscarderProperty',
         strategy: [$class: 'LogRotator', numToKeepStr: '5']],
-    pipelineTriggers([[$class: 'SCMTrigger', scmpoll_spec: '@hourly']]),
+    pipelineTriggers([cron('@hourly')]),
 ])
 
 node('docker') {
