@@ -13,7 +13,7 @@ properties([
 
 node('docker') {
     timestamps {
-        docker.image('centos').inside {
+        docker.image('centos').inside('-u 0:0') {
             stage('Prepare Container') {
                 sh 'yum install -y wget'
             }
