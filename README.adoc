@@ -3,3 +3,28 @@
 
 This repository contains branches which act as acceptance tests for the Jenkins
 projects infrastructure.
+
+
+== How this repository works
+
+
+This repository uses the Multibranch Pipeline support in Jenkins to treat each
+branch as its own Pipeline project. This is a pattern developed by
+link:https://github.com/markewaite[Mark Waite]
+for running acceptance tests for the
+link:https://github.com/jenkinsci/git-plugin[git-plugin]
+within Jenkins.
+
+This means that each acceptance test case is a different *branch* in this
+repository.
+
+
+== Creating a test case
+
+
+. Create a new empty branch: `git checkout --orphan name-of-my-new-test-case`
+. Remove the files sitting around in the current working directory: `rm -rf *`
+. Reset the git staging area: `git reset --hard`
+. Create a `Jenkinsfile` and `README.adoc`
+. Implement your test(s)
+. Add your changes: `git add Jenkinsfile README.adoc` and commit.
