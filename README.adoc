@@ -1,0 +1,5 @@
+= Jenkins infrastructure acceptance tests
+
+
+This repository contains branches which act as acceptance tests for the Jenkins
+projects infrastructure.
