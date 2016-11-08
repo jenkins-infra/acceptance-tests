@@ -1,4 +1,4 @@
-= Instal the latest Debian package
+= Install the latest Debian package
 
 This test accesses the apt repository at
 link:https://pkg.jenkins.io/debian[pkg.jenkins.io/debian],
