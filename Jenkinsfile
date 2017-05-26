@@ -7,13 +7,9 @@ properties([
 
 node('docker') {
     timestamps {
-        docker.image('debian').inside('-u 0:0') {
-            stage('Prepare Container') {
-                sh 'apt-get update -qy && apt-get install -qy --force-yes curl'
-            }
-
+        docker.image('cloudbees/java-build-tools').inside() {
             stage('Run the tests') {
-                git url: '/home/ogondza/code/jenkins/infra-acceptance-tests', branch: "update-site"
+                git url: 'https://github.com/jenkins-infra/acceptance-tests.git', branch: "update-site"
                 sh 'bash ./test.sh'
             }
         }
