@@ -15,7 +15,7 @@ node('docker') {
     timestamps {
         docker.image('debian').inside('-u 0:0') {
             stage('Prepare Container') {
-                sh 'apt-get update -qy && apt-get install -qy --force-yes wget apt-transport-https'
+                sh 'apt-get update -qy && apt-get install -qy --force-yes wget apt-transport-https gnupg2'
             }
 
             stage('Add the apt key') {
