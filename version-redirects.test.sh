@@ -26,11 +26,11 @@ function checkRedirect() {
   fi
 }
 
-checkRedirect "2.46" "2.46"
-checkRedirect "2.46.1" "stable-2.46"
-checkRedirect "2.46.3" "stable-2.46"
-checkRedirect "2.46.3.1" "stable-2.46"
-checkRedirect "2.46.3-SNAPSHOT (someone built this now)" "stable-2.46"
-checkRedirect "2.46.3-1234567" "stable-2.46"
+checkRedirect "2.204"                   "2.204"
+checkRedirect "2.204.1"          "stable-2.204"
+checkRedirect "2.204.3"          "stable-2.204"
+checkRedirect "2.204.3.1"        "stable-2.204"
+checkRedirect "2.204.3-SNAPSHOT" "stable-2.204"
+checkRedirect "2.204.3-1234567"  "stable-2.204"
 
 exit $result
