@@ -5,7 +5,9 @@ properties([
     pipelineTriggers([cron('@hourly')]),
 ])
 
-timeout(time: 45, unit: 'MINUTES') {
+// Only one build at a time, abort older builds if newer builds start
+// See https://jenkins.io/blog/2016/10/16/stage-lock-milestone/#putting-it-all-together
+lock(resource: 'infra/acceptance-tests/update-site', inversePrecedence: true) {
     node('docker') {
         docker.image('cloudbees/java-build-tools').inside() {
             stage('Run the tests') {
