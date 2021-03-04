@@ -26,8 +26,6 @@ function checkRedirect() {
   fi
 }
 
-checkRedirect "2.204"            "dynamic-2.204"
-
 checkRedirect "2.204.6"          "dynamic-stable-2.204.6"
 
 checkRedirect "2.204.3.1"        "current"                # Unrecognized version takes current
@@ -50,5 +48,10 @@ checkRedirect "2.235.1-SNAPSHOT" "dynamic-stable-2.235.1"
 checkRedirect "2.235.1-1234567"  "dynamic-stable-2.235.1"
 
 checkRedirect "2.263.1"          "dynamic-stable-2.263.1"
+checkRedirect "2.263.2"          "dynamic-stable-2.263.2"
+checkRedirect "2.263.3"          "dynamic-stable-2.263.3"
+checkRedirect "2.263.4"          "dynamic-stable-2.263.4"
+
+checkRedirect "2.277"            "dynamic-2.277"
 
 exit $result
