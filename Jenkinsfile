@@ -18,7 +18,7 @@ node('docker') {
     timestamps {
         docker.image('centos').inside('-u 0:0') {
             stage('Prepare Container') {
-                sh 'yum install -y wget'
+                sh 'yum install -y wget epel-release'
             }
 
             stage('Add the rpm key') {
