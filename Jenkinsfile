@@ -41,8 +41,7 @@ timeout(unit: 'MINUTES', time:29) {
     for (unboundStage in sequentialStages) {
         def boundStage = unboundStage
         stage(boundStage.key) {
-            def parallelSteps = generateParallelSteps(sequentialStages[boundStage.key])
-            parallel parallelSteps
+            parallel generateParallelSteps(sequentialStages[boundStage.key])
         }
     }
 }
