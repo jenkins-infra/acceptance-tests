@@ -1,0 +1,4 @@
+= Allocate each agent type
+
+This test allocates each of the agent types and performs a trivial step on the agent.
+Timeout fails the job if it does not complete within half an hour.
