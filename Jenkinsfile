@@ -5,12 +5,11 @@ def buildNumber = BUILD_NUMBER as int; if (buildNumber > 1) milestone(buildNumbe
 
 /*
  * Making sure that we can follow the steps necessary to install the latest
- * release RPM for redhat/centos machine:
+ * release for Debian/Ubuntu machine.
  */
 
 properties([
-    [$class: 'jenkins.model.BuildDiscarderProperty',
-        strategy: [$class: 'LogRotator', numToKeepStr: '5']],
+    buildDiscarder(logRotator(numToKeepStr: '5'))
     pipelineTriggers([cron('@hourly')]),
 ])
 
