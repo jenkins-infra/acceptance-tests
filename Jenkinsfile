@@ -9,7 +9,7 @@ def buildNumber = BUILD_NUMBER as int; if (buildNumber > 1) milestone(buildNumbe
  */
 
 properties([
-    buildDiscarder(logRotator(numToKeepStr: '5'))
+    buildDiscarder(logRotator(numToKeepStr: '5')),
     pipelineTriggers([cron('@hourly')]),
 ])
 
