@@ -3,9 +3,13 @@
 // Only one build running at a time, stop prior build if new build starts
 def buildNumber = BUILD_NUMBER as int; if (buildNumber > 1) milestone(buildNumber - 1); milestone(buildNumber) // Thanks to jglick
 
+/*
+ * Making sure that we can follow the steps necessary to install the latest
+ * LTS release RPM for redhat/centos machine.
+ */
+
 properties([
-    [$class: 'jenkins.model.BuildDiscarderProperty',
-        strategy: [$class: 'LogRotator', numToKeepStr: '5']],
+    buildDiscarder(logRotator(numToKeepStr: '5')),
     pipelineTriggers([cron('@hourly')]),
 ])
 
