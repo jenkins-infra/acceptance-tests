@@ -47,7 +47,7 @@ def generateParallelSteps(labels) {
 
 
 timeout(unit: 'MINUTES', time:29) {
-       stage("processor") {
+       stage("Processor") {
                parallel generateParallelSteps(Processors)
         }
 }
