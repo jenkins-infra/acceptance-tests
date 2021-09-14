@@ -22,7 +22,7 @@ def generateParallelSteps(labels) {
     for (unboundLabel in labels) {
         def label = unboundLabel // Bind label before the closure
         parallelNodes[label] = {
-            node('docker') {
+            node(label) {
                 timestamps {
                     docker.image('debian').inside('-u 0:0') {
                         stage('Prepare Container') {
