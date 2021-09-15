@@ -13,21 +13,40 @@ properties([
     pipelineTriggers([cron('@hourly')]),
 ])
 
-node('docker') {
-    timestamps {
-        docker.image('debian').inside('-u 0:0') {
-            stage('Prepare Container') {
-                sh 'apt-get update -q -y && apt-get install -q -y --allow-change-held-packages wget apt-transport-https gnupg2'
-            }
+// Define processors
+def Processors = [ "arm64docker", "docker", "ppc64ledocker", "s390xdocker" ]
 
-            stage('Add the apt key') {
-                sh 'wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -'
-            }
+// Generate a parallel step for each label in labels
+def generateParallelSteps(labels) {
+    def parallelNodes = [:]
+    for (unboundLabel in labels) {
+        def label = unboundLabel // Bind label before the closure
+        parallelNodes[label] = {
+            node(label) {
+                timestamps {
+                    docker.image('debian').inside('-u 0:0') {
+                        stage('Prepare Container') {
+                            sh 'apt-get update -q -y && apt-get install -q -y --allow-change-held-packages wget apt-transport-https gnupg2'
+                        }
 
-            stage('Install Jenkins from apt') {
-                sh 'echo "deb https://pkg.jenkins.io/debian-stable binary/" >> /etc/apt/sources.list'
-                sh 'apt-get update && apt-get install -qy jenkins'
+                        stage('Add the apt key') {
+                            sh 'wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -'
+                        }
+
+                        stage('Install Jenkins from apt') {
+                            sh 'echo "deb https://pkg.jenkins.io/debian-stable binary/" >> /etc/apt/sources.list'
+                            sh 'apt-get update && apt-get install -qy jenkins'
+                        }
+                    }
+                }
             }
         }
     }
+    return parallelNodes
+}
+
+timeout(unit: 'MINUTES', time:29) {
+       stage("Processor") {
+               parallel generateParallelSteps(Processors)
+        }
 }
