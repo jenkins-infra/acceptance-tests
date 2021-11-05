@@ -26,7 +26,7 @@ def generateParallelSteps(labels) {
                 timestamps {
                     docker.image('debian').inside('-u 0:0') {
                         stage('Prepare Container') {
-                            sh 'apt-get update -q -y && apt-get install -q -y --allow-change-held-packages wget curl apt-transport-https'
+                            sh 'apt-get update -q -y && apt-get install -q -y --allow-change-held-packages curl apt-transport-https'
                         }
 
                         stage('Add the apt key') {
