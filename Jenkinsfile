@@ -34,7 +34,7 @@ def generateParallelSteps(labels) {
                         }
 
                         stage('Install Jenkins from apt') {
-                            sh 'echo \'deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary\' | tee /etc/apt/sources.list.d/jenkins.list > /dev/null'
+                            sh 'echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | tee /etc/apt/sources.list.d/jenkins.list > /dev/null'
                             sh 'apt-get update && apt-get install -qy jenkins'
                         }
                     }
