@@ -26,15 +26,15 @@ def generateParallelSteps(labels) {
                 timestamps {
                     docker.image('debian').inside('-u 0:0') {
                         stage('Prepare Container') {
-                            sh 'apt-get update -q -y && apt-get install -q -y --allow-change-held-packages wget apt-transport-https gnupg2'
+                            sh 'apt-get update -q -y && apt-get install -q -y --allow-change-held-packages curl apt-transport-https'
                         }
 
                         stage('Add the apt key') {
-                            sh 'wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -'
+                            sh 'curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null'
                         }
 
                         stage('Install Jenkins from apt') {
-                            sh 'echo "deb https://pkg.jenkins.io/debian-stable binary/" >> /etc/apt/sources.list'
+                            sh 'echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | tee /etc/apt/sources.list.d/jenkins.list > /dev/null'
                             sh 'apt-get update && apt-get install -qy jenkins'
                         }
                     }
