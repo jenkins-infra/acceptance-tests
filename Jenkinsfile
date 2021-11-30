@@ -17,7 +17,7 @@ sequentialStages['OS & Java'] = [ 'linux', 'windows', 'jdk8', 'jdk11', ]
 sequentialStages['Processor'] = [ 'arm64', 'amd64', 's390x', ] // 'ppc64le' removed because agent is offline due to operating system patch install
 sequentialStages['Docker'] = [ 'arm64docker', 'docker', 's390xdocker', 'docker', 'docker-windows', ] // 'ppc64ledocker' removed because agent is offline due to operating system patch install
 sequentialStages['Memory'] = [ 'highmem', 'highram', ]
-sequentialStages['Cloud & Orchestrator'] = [ 'aws', 'ppc64le', 's390x', 'kubernetes', 'vm', ] // 'aci', 'azure' not included currently
+sequentialStages['Cloud & Orchestrator'] = [ 'aws', 's390x', 'kubernetes', 'vm', ] // 'aci', 'azure' not included currently. 'ppc64le' removed because agent is offline
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
