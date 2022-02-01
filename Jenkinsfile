@@ -29,7 +29,7 @@ def generateParallelSteps(labels) {
                 if (isUnix()) {
                     sh 'cat /proc/cpuinfo /proc/meminfo'
                 } else {
-                    bat 'systeminfo'
+                    bat '%WINDIR%\\SysWOW64\\systeminfo.exe'
                 }
             }
         }
