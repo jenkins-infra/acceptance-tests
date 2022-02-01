@@ -27,7 +27,7 @@ def generateParallelSteps(labels) {
         parallelNodes[label] = {
             node(label) {
                 if (isUnix()) {
-                    sh 'uname -a'
+                    sh 'cat /proc/cpuinfo /proc/meminfo'
                 } else {
                     bat 'set | findstr Windows'
                 }
