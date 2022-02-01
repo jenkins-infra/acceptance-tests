@@ -5,7 +5,7 @@ def buildNumber = BUILD_NUMBER as int; if (buildNumber > 1) milestone(buildNumbe
 
 /*
  * Making sure that we can follow the steps necessary to install the latest
- * LTS release RPM for redhat/centos machine.
+ * release RPM for redhat/almalinux/rocky machine.
  */
 
 properties([
@@ -15,7 +15,7 @@ properties([
 
 node('docker') {
     timestamps {
-        docker.image('centos').inside('-u 0:0') {
+        docker.image('almalinux').inside('-u 0:0') {
             stage('Prepare Container') {
                 sh 'yum install -y wget epel-release'
             }
