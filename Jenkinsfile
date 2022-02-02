@@ -30,6 +30,7 @@ def generateParallelSteps(labels) {
                     sh 'cat /proc/cpuinfo /proc/meminfo'
                 } else {
                     bat 'set | findstr PROCESSOR'
+                    powershell '(Get-WMIObject Win32_PhysicalMemory |  Measure-Object Capacity -Sum).sum/1GB'
                 }
             }
         }
