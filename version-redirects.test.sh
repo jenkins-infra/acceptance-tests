@@ -2,7 +2,7 @@
 
 # Test Jenkins requests for metadata gets redirected to correct version of update center.
 
-UPDATE_CENTER='https://updates.jenkins-ci.org/'
+UPDATE_CENTER='https://updates.jenkins.io/'
 
 result=0
 
