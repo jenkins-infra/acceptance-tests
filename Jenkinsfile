@@ -27,7 +27,12 @@ def generateParallelSteps(labels) {
         parallelNodes[label] = {
             node(label) {
                 if (isUnix()) {
-                    sh 'cat /proc/cpuinfo /proc/meminfo'
+                    sh '''
+                       uname -a
+                       [ -f /etc/os-release ] && cat /etc/os-release
+                       [ -f /proc/cpuinfo ]   && cat /proc/cpuinfo
+                       [ -f /proc/meminfo ]   && cat /proc/meminfo
+                    '''
                 } else {
                     bat 'set | findstr PROCESSOR'
                 }
