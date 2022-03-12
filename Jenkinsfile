@@ -14,7 +14,7 @@ properties([
 ])
 
 // Define processors
-def Processors = [ "arm64docker", "docker", "s390xdocker" ] // "ppc64ledocker" excluded because test machine cannot download the jenkins package
+def Processors = [ "arm64docker", "docker" ] // "ppc64ledocker", "s390xdocker" excluded because test machine cannot download the jenkins package
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
