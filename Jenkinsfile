@@ -29,9 +29,11 @@ def generateParallelSteps(labels) {
                 if (isUnix()) {
                     sh '''
                        uname -a
-                       [ -f /etc/os-release ] && cat /etc/os-release
-                       [ -f /proc/cpuinfo ]   && cat /proc/cpuinfo
-                       [ -f /proc/meminfo ]   && cat /proc/meminfo
+                       if test -e /etc/os-release; then
+                           cat /etc/os-release
+                           cat /proc/cpuinfo
+                           cat /proc/meminfo
+                       fi
                     '''
                 } else {
                     bat 'set | findstr PROCESSOR'
