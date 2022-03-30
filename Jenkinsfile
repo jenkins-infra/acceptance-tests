@@ -31,7 +31,11 @@ def generateParallelSteps(labels) {
                        uname -a
                        if test -e /etc/os-release; then
                            cat /etc/os-release
+                       fi
+                       if test -e /proc/cpuinfo; then
                            cat /proc/cpuinfo
+                       fi
+                       if test -e /proc/meminfo; then
                            cat /proc/meminfo
                        fi
                     '''
