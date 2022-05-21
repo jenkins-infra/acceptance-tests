@@ -14,10 +14,10 @@ properties([
 def sequentialStages = [:]
 sequentialStages['Tool'] = [ 'java', 'maven', 'maven-windows', 'maven-11', 'maven-11-windows', 'ruby', ]
 sequentialStages['OS & Java'] = [ 'linux', 'windows', 'jdk8', 'jdk11', ]
-sequentialStages['Processor'] = [ 'arm64', 'amd64', 'ppc64le' ] // 's390x' removed because agent is offline for unknown reasons
-sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker', 'docker-windows', ] // 's390xdocker' and 'ppc64ledocker' removed because agent is offline
+sequentialStages['Processor'] = [ 'arm64', 'amd64', 'ppc64le', 's390x']
+sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows', ] // 's390xdocker' and 'ppc64ledocker' removed because we use qemu for docker multi-CPU
 sequentialStages['Memory'] = [ 'highmem', 'highram', ]
-sequentialStages['Cloud & Orchestrator'] = [ 'aws', 'kubernetes', 'ppc64le', 'vm', ] // 'aci', 'azure' not included currently. 's390x' removed because agent is offline
+sequentialStages['Cloud & Orchestrator'] = [ 'aws', 'kubernetes', 'ppc64le', 's390x', 'vm', ] // 'aci', 'azure' not included currently.
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
