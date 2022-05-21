@@ -12,12 +12,12 @@ properties([
 
 // Define the sequential stages and the parallel steps inside each stage
 def sequentialStages = [:]
-sequentialStages['Tool'] = [ 'java', 'maven', 'maven-windows', 'maven-11', 'maven-11-windows', 'ruby', ]
-sequentialStages['OS & Java'] = [ 'linux', 'windows', 'jdk8', 'jdk11', ]
-sequentialStages['Processor'] = [ 'arm64', 'amd64', 'ppc64le' ] // 's390x' removed because agent is offline for unknown reasons
-sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker', 'docker-windows', ] // 's390xdocker' and 'ppc64ledocker' removed because agent is offline
-sequentialStages['Memory'] = [ 'highmem', 'highram', ]
-sequentialStages['Cloud & Orchestrator'] = [ 'aws', 'kubernetes', 'ppc64le', 'vm', ] // 'aci', 'azure' not included currently. 's390x' removed because agent is offline
+sequentialStages['Tool'] = [ 'java', 'maven', 'maven-windows', 'maven-11', 'maven-11-windows', 'ruby']
+sequentialStages['OS & Java'] = [ 'linux', 'windows', 'jdk8', 'jdk11']
+sequentialStages['Processor'] = [ 'arm64', 'amd64', 'ppc64le', 's390x']
+sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows', 'ppc64ledocker', 's390xdocker']
+sequentialStages['Memory'] = [ 'highmem', 'highram']
+sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
@@ -28,16 +28,16 @@ def generateParallelSteps(labels) {
             node(label) {
                 if (isUnix()) {
                     sh '''
-                       uname -a
-                       if test -e /etc/os-release; then
-                           cat /etc/os-release
-                       fi
-                       if test -e /proc/cpuinfo; then
-                           cat /proc/cpuinfo
-                       fi
-                       if test -e /proc/meminfo; then
-                           cat /proc/meminfo
-                       fi
+                        uname -a
+                        if test -e /etc/os-release; then
+                            cat /etc/os-release
+                        fi
+                        if test -e /proc/cpuinfo; then
+                            cat /proc/cpuinfo
+                        fi
+                        if test -e /proc/meminfo; then
+                            cat /proc/meminfo
+                        fi
                     '''
                 } else {
                     bat 'set | findstr PROCESSOR'
