@@ -9,11 +9,12 @@ result=0
 function checkRedirect() {
   version="$1"
   target="$2"
+  echo ====== $version $target ======
   stderr="$(curl -vIL "${UPDATE_CENTER}/update-center.json?id=default&version=${version}" 2>&1 > /dev/null)"
-  header="$(grep 'Location' <<< "$stderr" | tr -d '\r')"
+  header="$(grep -i 'location:' <<< "$stderr" | tr -d '\r')"
   #target="$( sed 's~.*/\([^/]*\)/update-center.json~\1~' <<< "$header")"
 
-  expected="Location: ${UPDATE_CENTER}${target}/update-center.json"
+  expected="< location: ${UPDATE_CENTER}${target}/update-center.json"
   if [[ "$header" != *"$expected" ]]; then
     echo >&2 "Not redirected to correct update center for ${version}"
     echo >&2 "  Expected: $expected"
