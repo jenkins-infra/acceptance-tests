@@ -14,7 +14,7 @@ properties([
 def sequentialStages = [:]
 sequentialStages['Tool'] = [ 'java', 'maven', 'maven-windows', 'maven-11', 'maven-11-windows', 'ruby']
 sequentialStages['OS & Java'] = [ 'linux', 'windows', 'jdk8', 'jdk11']
-sequentialStages['Processor'] = [ 'arm64', 'amd64', 'ppc64le', 's390x']
+sequentialStages['Processor'] = [ 'arm64', 'amd64' ] // Remove ppc64le and s390x until virtual machine available 'ppc64le', 's390x'
 sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows', 'ppc64ledocker', 's390xdocker']
 sequentialStages['Memory'] = [ 'highmem', 'highram']
 sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
