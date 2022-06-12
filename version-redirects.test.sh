@@ -27,12 +27,6 @@ function checkRedirect() {
   fi
 }
 
-checkRedirect "2.289"            "dynamic-2.289"
-
-checkRedirect "2.289.1"          "dynamic-stable-2.289.1"
-checkRedirect "2.289.2"          "dynamic-stable-2.289.2"
-checkRedirect "2.289.3"          "dynamic-stable-2.289.3"
-
 checkRedirect "2.303"            "dynamic-2.303"
 
 checkRedirect "2.303.1"          "dynamic-stable-2.303.1"
@@ -44,5 +38,9 @@ checkRedirect "2.319.1"          "dynamic-stable-2.319.1"
 checkRedirect "2.319.3"          "dynamic-stable-2.319.3"
 
 checkRedirect "2.332.1"          "dynamic-stable-2.332.1"
+checkRedirect "2.332.2"          "dynamic-stable-2.332.2"
+checkRedirect "2.332.3"          "dynamic-stable-2.332.3"
+
+checkRedirect "2.350"            "dynamic-2.350"
 
 exit $result
