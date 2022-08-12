@@ -12,7 +12,7 @@ properties([
 
 // Define the sequential stages and the parallel steps inside each stage
 def sequentialStages = [:]
-sequentialStages['Tool'] = [ 'java', 'maven', 'maven-windows', 'maven-11', 'maven-11-windows', 'ruby']
+sequentialStages['Tool'] = [ 'java', 'maven', 'maven-windows', 'maven-11', 'maven-11-windows']
 sequentialStages['OS & Java'] = [ 'linux', 'windows', 'jdk8', 'jdk11']
 sequentialStages['Processor'] = [ 'arm64', 'amd64' ] // Remove ppc64le and s390x until virtual machine available 'ppc64le', 's390x'
 sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows' ] // Remove ppc64le and s390x until available again 'ppc64ledocker', 's390xdocker'
