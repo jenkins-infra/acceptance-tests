@@ -18,7 +18,7 @@ def sequentialStages = [:]
 // sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows' ] // Remove ppc64le and s390x until available again 'ppc64ledocker', 's390xdocker'
 // sequentialStages['Memory'] = [ 'highmem', 'highram']
 // sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
-sequentialStages['Testing'] = [ 'cloud-linux-jdk11-amd64' ]
+sequentialStages['Testing'] = [ 'cloud-linux-jdk11-amd64', 'cloud-linux-jdk17-amd64' ]
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
