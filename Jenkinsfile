@@ -7,7 +7,7 @@ properties([
     buildDiscarder(logRotator(numToKeepStr: '15')),
     disableResume(),
     durabilityHint('PERFORMANCE_OPTIMIZED'),
-    pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
+    pipelineTriggers([cron('H H/8 * * *')], 'githubPush'), // Run once every 8 hours (three times a day)
 ])
 
 // Define the sequential stages and the parallel steps inside each stage
