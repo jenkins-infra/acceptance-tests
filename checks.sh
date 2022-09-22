@@ -1,7 +1,10 @@
 #!/bin/bash
 set -eux -o pipefail
 
-echo "version 20220922_091800"
+echo "version 20220922_094500"
+
+MavenVersion="3.8.6"
+JDKdefault="jdk-11"
 
 # uname -a
 # if test -e /etc/os-release; then
@@ -50,7 +53,7 @@ echo "version 20220922_091800"
 
 # if [ $# -ge 1 ] && [ -n "$1" ]; then
 #     echo "label of the node: $1"
-#     jdk="jdk-11"
+#     jdk=$JDKdefault
 #     if [ "$1" = "maven-8" ]; then
 #         jdk="jdk-8"
 #     elif [ "$1" = "maven-17" ]; then
@@ -73,4 +76,11 @@ echo "version 20220922_091800"
 # fi
 
 
-mvn -v
+if [[ $(mvn -v) != *"$MavenVersion"* ]]; then
+    echo "ERROR Maven version not matching what is expected : "
+    echo "expecting $MavenVersion for label $1"
+    echo "found $(mvn -v)"
+    exit 1
+else
+    echo "JDK ok : $(mvn -v) for $1"
+fi
