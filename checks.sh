@@ -84,4 +84,4 @@ JDKdefault="jdk-11"
 #     echo "MAVEN ok : $MavenVersion for $1"
 # fi
 #
-journalctl -u datadog-agent --no-pager --no-full --lines=100
+datadog-agent status
