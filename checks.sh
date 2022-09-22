@@ -82,5 +82,5 @@ if [[ $(mvn -v) != *"$MavenVersion"* ]]; then
     echo "found $(mvn -v)"
     exit 1
 else
-    echo "MAVEN ok : $(mvn -v) for $1"
+    echo "MAVEN ok : $MavenVersion for $1"
 fi
