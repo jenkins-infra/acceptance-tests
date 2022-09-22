@@ -84,4 +84,6 @@ JDKdefault="jdk-11"
 #     echo "MAVEN ok : $MavenVersion for $1"
 # fi
 #
-datadog-agent version
+
+datadog-agent version #show the version but nothing about the running or not
+service datadog-agent status
