@@ -74,13 +74,14 @@ JDKdefault="jdk-11"
 #         echo "JDK ok : ${JAVA_HOME} for $1"
 #     fi
 # fi
-
-
-if [[ $(mvn -v) != *"$MavenVersion"* ]]; then
-    echo "ERROR Maven version not matching what is expected : "
-    echo "expecting $MavenVersion for label $1"
-    echo "found $(mvn -v)"
-    exit 1
-else
-    echo "MAVEN ok : $MavenVersion for $1"
-fi
+#
+# if [[ $(mvn -v) != *"$MavenVersion"* ]]; then
+#     echo "ERROR Maven version not matching what is expected : "
+#     echo "expecting $MavenVersion for label $1"
+#     echo "found $(mvn -v)"
+#     exit 1
+# else
+#     echo "MAVEN ok : $MavenVersion for $1"
+# fi
+#
+journalctl -u datadog-agent --no-pager --no-full --tail=100
