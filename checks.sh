@@ -26,9 +26,9 @@ else
 fi
 
 if getent passwd jenkins >/dev/null; then
-    echo "jenkins user exists"
+    echo "'jenkins' user exists"
 else
-    echo "ERROR jenkins user does not exist"
+    echo "ERROR: 'jenkins' user does not exist"
     exit 1
 fi
 
