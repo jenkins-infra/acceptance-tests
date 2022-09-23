@@ -65,8 +65,7 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
         jdk="jdk-8"
     fi
     if [[ "$(mvn -v 2>&1)" != *"${jdk}"* ]]; then
-        echo "ERROR JDK not matching what is expected: "
-        echo "expecting ${jdk} for label $1"
+        echo "ERROR: JDK not matching the expected ${jdk} for label '$1'"
         echo "$(mvn -v 2>&1)"
         exit 1
     else
