@@ -5,6 +5,8 @@ DefaultLocale="en_US.utf8"
 DefaultMavenVersion="3.8.6"
 DefaultJDKVersion="jdk-11"
 
+failed=0
+
 uname -a
 if test -e /etc/os-release; then
     cat /etc/os-release
@@ -22,31 +24,31 @@ if [[ "$(locale -a)" =~ ${DefaultLocale} ]]; then
     echo "${DefaultLocale} locale is available"
 else
     echo "ERROR: ${DefaultLocale} locale is not available $(locale -a)"
-    exit 1
+    failed=$((failed + 1))
 fi
 
 if getent passwd jenkins >/dev/null; then
     echo "'jenkins' user exists"
 else
     echo "ERROR: 'jenkins' user does not exist"
-    exit 1
+    failed=$((failed + 2))
 fi
 
 if [[ "$(whoami)" != "jenkins" ]]; then
     echo "ERROR: Not running as 'jenkins' user"
     echo "whoami: $(whoami)"
-    exit 1
+    failed=$((failed + 4))
 fi
 
 if sudo -n whoami; then
     echo "ERROR: running as root should not be possible"
-    exit 1
+    failed=$((failed + 8))
 fi
 
 set +u
 if [[ -z "${JAVA_HOME}" ]]; then
     echo "ERROR: the 'JAVA_HOME' environment variable is undefined"
-    exit 1
+    failed=$((failed + 16))
 fi
 set -u
 
@@ -71,7 +73,7 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
     if [[ "$(mvn -v 2>&1)" != *"${jdk}"* ]]; then
         echo "ERROR: JDK not matching the expected ${jdk} for label '$1'"
         echo "$(mvn -v 2>&1)"
-        exit 1
+        failed=$((failed + 32))
     else
         echo "JDK ok ${jdk} for $1"
     fi
@@ -81,7 +83,9 @@ if [[ "$(mvn -v  2>&1)" != *"${DefaultMavenVersion}"* ]]; then
     echo "ERROR Maven version not matching what is expected : "
     echo "expecting ${DefaultMavenVersion} for label '$1'"
     echo "found $(mvn -v 2>&1)"
-    exit 1
+    failed=$((failed + 64))
 else
     echo "Maven version ${DefaultMavenVersion} OK for label '$1'"
 fi
+
+exit ${failed}
