@@ -75,7 +75,7 @@ fi
 
 if [[ "$(mvn -v  2>&1)" != *"${DefaultMavenVersion}"* ]]; then
     echo "ERROR Maven version not matching what is expected : "
-    echo "expecting ${DefaultMavenVersion} for label $1"
+    echo "expecting ${DefaultMavenVersion} for label '$1'"
     echo "found $(mvn -v 2>&1)"
     exit 1
 else
