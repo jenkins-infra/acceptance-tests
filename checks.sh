@@ -50,6 +50,10 @@ if [[ -z "${JAVA_HOME}" ]]; then
 fi
 set -u
 
+# This check relies on the path of the Java runtime
+# Java 8 needs to include 'jdk-8' in the directory structure
+# Java 11 needs to include 'jdk-11' in the directory structure
+# Java 17 needs to include 'jdk-17' in the directory structure
 if [ $# -ge 1 ] && [ -n "$1" ]; then
     echo "label of the node: $1"
     jdk="${DefaultJDKVersion}"
