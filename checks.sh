@@ -33,13 +33,13 @@ else
 fi
 
 if [[ "$(whoami)" != "jenkins" ]]; then
-    echo "ERROR Not running as jenkins user"
+    echo "ERROR: Not running as 'jenkins' user"
     echo "whoami: $(whoami)"
     exit 1
 fi
 
 if sudo -n whoami; then
-    echo "ERROR running as root possible"
+    echo "ERROR: running as root should not be possible"
     exit 1
 fi
 
