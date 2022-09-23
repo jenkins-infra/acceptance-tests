@@ -45,7 +45,7 @@ fi
 
 set +u
 if [[ -z "${JAVA_HOME}" ]]; then
-    echo "ERROR: the environment variable 'JAVA_HOME' is undefined"
+    echo "ERROR: the 'JAVA_HOME' environment variable is undefined"
     exit 1
 fi
 set -u
