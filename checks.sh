@@ -79,5 +79,5 @@ if [[ "$(mvn -v  2>&1)" != *"${DefaultMavenVersion}"* ]]; then
     echo "found $(mvn -v 2>&1)"
     exit 1
 else
-    echo "MAVEN ok: ${DefaultMavenVersion} for $1"
+    echo "Maven version ${DefaultMavenVersion} OK for label '$1'"
 fi
