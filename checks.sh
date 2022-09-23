@@ -21,7 +21,7 @@ fi
 if [[ "$(locale -a)" =~ ${DefaultLocale} ]]; then
     echo "${DefaultLocale} locale is available"
 else
-    echo "ERROR ${DefaultLocale} locale is not available $(locale -a)"
+    echo "ERROR: ${DefaultLocale} locale is not available $(locale -a)"
     exit 1
 fi
 
