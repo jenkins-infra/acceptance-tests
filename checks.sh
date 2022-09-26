@@ -81,8 +81,8 @@ fi
 
 # This check relies on the java version output of the 'mvn -v' command
 # Java 8 needs to include '1.8' in the output
-# Java 11 needs to include '11' in the output
-# Java 17 needs to include '17' in the output
+# Java 11 needs to include '11.' in the output
+# Java 17 needs to include '17.' in the output
 if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "label of the node: $1"
 	jdk="${DefaultJDKVersion}"
