@@ -114,12 +114,12 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 		;;
 	esac
 
-	if [[ "$(mvn -v 2>&1 | grep 'JAVA Version')" != *"${jdknumber}"* ]]; then
-		echo "ERROR: JDK not matching the expected ${jdknumber} for label '$1'"
-		eval "mvn -v 2>&1 | grep 'JAVA Version'"
+    JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
+	if [[ "${JDKfromMaven}" != *"${jdknumber}"* ]]; then
+		echo "ERROR: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '$1'"
 		failed=$(($failed + 64))
 	else
-		echo "JDK Version ok ${jdknumber} for $1"
+		echo "JDK Version ok ${JDKfromMaven} for $1"
 	fi
 fi
 
