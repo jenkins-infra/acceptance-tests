@@ -116,7 +116,7 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 
 	if [[ "$(mvn -v 2>&1 | grep 'JAVA Version')" != *"${jdknumber}"* ]]; then
 		echo "ERROR: JDK not matching the expected ${jdknumber} for label '$1'"
-		mvn -v 2>&1 | grep 'JAVA Version'
+		eval "mvn -v 2>&1 | grep 'JAVA Version'"
 		failed=$(($failed + 64))
 	else
 		echo "JDK Version ok ${jdknumber} for $1"
