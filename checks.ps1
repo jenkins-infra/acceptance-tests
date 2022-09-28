@@ -4,44 +4,76 @@ $ErrorActionPreference = 'Stop'
 ## Uncomment to enable Verbose mode - equivalent of "set -x"
 # https://stackoverflow.com/questions/41324882/how-to-run-a-powershell-script-with-verbose-output
 # $VerbosePreference="Continue"
-Set-PSDebug -Trace 1
+#Set-PSDebug -Trace 1
 
-function Test-Administrator
-{
-    [OutputType([bool])]
-    param()
-    process {
-        [Security.Principal.WindowsPrincipal]$user = [Security.Principal.WindowsIdentity]::GetCurrent();
-        return $user.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator);
+$DefaultLocale="en.US"
+$DefaultMavenVersion="3\.8\.6"
+$DefaultJDKVersion="11\."
+
+Write-Host "AGENT LABEL $Args[0]"
+switch ($Args[0]) {
+    "maven-11-windows" {
+        $DefaultLocale="en.US"
+        $DefaultMavenVersion="3\.8\.4"
+        $DefaultJDKVersion="11\."
+    }
+    "maven-windows" {
+        $DefaultLocale="en.US"
+        $DefaultMavenVersion="3\.8\.4"
+        $DefaultJDKVersion="1\.8"
     }
 }
+
+[int]$failed=0
 
 Get-Item -Path Env:\*PROCESSOR*
 Get-Item -Path Env:\OS
 Get-Item -Path Env:\USERNAME
-
-Get-WmiObject -Class win32_computersystem |
-    Select-Object -Property @{
-        label= 'Total Physical Memory'
-        expression={($_.TotalPhysicalMemory/1GB).ToString("N2") + " GB"}
-    }
-
-Get-WinSystemLocale | Select-Object -Property Name, DisplayName
-
-if(Test-Administrator)
-{
-    Write-Error "This script is executed as Administrator.";
-    exit 1;
+$username = Get-Item -Path Env:\USERNAME | Select-Object -ExpandProperty Value
+if($username -eq 'jenkins') {
+    Write-Host "Running as jenkins user"
+} else {
+    Write-Host "ERROR Running as $username"
+    $failed=$failed+1
 }
 
-#Get-WmiObject -Class Win32_Product -Filter "Name like 'Java(TM)%'" | Select -Expand Version
+try{
+    $memoryGB = (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
+    Write-Host "MEMORY GB: $memoryGB"
+} catch {
+    Write-Host "ACCESS TO MEMORY VALUE DENIED"
+}
 
-Invoke-Expression -Command "mvn.exe --version"
+Invoke-Expression -Command "mvn -v"
 
+try{
+    $langue = Invoke-Expression -Command "mvn -v" | Select-String -Pattern "Default locale"
+    switch -Regex ($langue) {
+        $DefaultLocale {"Locale OK $DefaultLocale in $langue"; Break}
+        Default {"Error Locale: $langue not matching $DefaultLocale"; $failed=$failed+2; Break}
+    }
+} catch {
+    Write-Host "ACCESS TO locale VALUE DENIED"
+}
 
-#$lastExitCode | Should -Be 0
-# Invoke-Expression -Command "mvn.exe --version" -ErrorAction SilentlyContinue |
-#     Select-String -Pattern 'Apache Maven'
+$javaVersion = Invoke-Expression -Command "mvn -v" | Select-String -Pattern "Java version"
+switch -Regex ($javaVersion) {
+    '1\.8' {"java  8: $javaVersion";}
+    '11\.' {"java 11: $javaVersion";}
+    '17\.' {"java 17: $javaVersion";}
+    Default {"java inconnu:  $javaVersion"; $failed=$failed+4; Break}
+}
+if ($javaVersion -match $DefaultJDKVersion) {
+    Write-Host "Running with $DefaultJDKVersion ($javaVersion)"
+} else {
+    Write-Host "ERROR Running with $javaVersion"
+    $failed=$failed+8
+}
 
-# Invoke-Expression -Command "java.exe -version" -ErrorAction SilentlyContinue |
-#     Select-String -Pattern 'java version'
+$mavenVersion = Invoke-Expression -Command "mvn -v" | Select-String -Pattern "Apache Maven"
+switch -Regex ($mavenVersion) {
+    $DefaultMavenVersion {"Maven OK $mavenVersion"; Break}
+    Default {"Error Maven:  $mavenVersion"; $failed=$failed+16; Break}
+}
+
+exit $failed
