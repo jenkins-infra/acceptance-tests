@@ -11,16 +11,36 @@ $DefaultMavenVersion="3\.8\.6"
 $DefaultJDKVersion="11\."
 
 Write-Host "AGENT LABEL $Args[0]"
-switch ($Args[0]) {
+switch -Regex ($Args[0]) {
+    "maven-8-windows" {
+        $DefaultLocale="en.US"
+        $DefaultMavenVersion="3\.8\.4"
+        $DefaultJDKVersion="1\.8"
+        Break
+    }
     "maven-11-windows" {
         $DefaultLocale="en.US"
         $DefaultMavenVersion="3\.8\.4"
         $DefaultJDKVersion="11\."
+        Break
     }
     "maven-windows" {
         $DefaultLocale="en.US"
         $DefaultMavenVersion="3\.8\.4"
         $DefaultJDKVersion="1\.8"
+        Break
+    }
+    "jnlp-maven-8" {
+        $DefaultLocale="en.US"
+        $DefaultMavenVersion="3\.8\.4"
+        $DefaultJDKVersion="1\.8"
+        Break
+    }
+    "jnlp-maven-17" {
+        $DefaultLocale="en.US"
+        $DefaultMavenVersion="3\.8\.6"
+        $DefaultJDKVersion="17\."
+        Break
     }
 }
 
