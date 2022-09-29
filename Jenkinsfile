@@ -10,7 +10,7 @@ properties([
     pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
 ])
 
-// // Define the sequential stages and the parallel steps inside each stage
+// Define the sequential stages and the parallel steps inside each stage
 def sequentialStages = [:]
 sequentialStages['Tool'] = [ 'java', 'maven', 'maven-11', 'maven-windows', 'maven-11-windows']
 sequentialStages['OS & Java'] = [ 'linux', 'jdk8', 'jdk11', 'windows']
