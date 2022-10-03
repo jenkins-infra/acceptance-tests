@@ -46,6 +46,8 @@ switch -Regex ($Args[0]) {
 
 [int]$failed=0
 
+Get-Service -Name cexecsvc
+
 function Test-IsInsideContainer {
     $foundService = Get-Service -Name cexecsvc -ErrorAction SilentlyContinue
     if( $foundService -eq $null ) {
