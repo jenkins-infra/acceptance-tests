@@ -46,7 +46,9 @@ switch -Regex ($Args[0]) {
 
 [int]$failed=0
 
-Get-Item -Path Env\*
+Get-Childitem -Path Env:* | Sort-Object Name
+
+Get-Service
 
 function Test-IsInsideContainer {
     $foundService = Get-Service -Name cexecsvc -ErrorAction SilentlyContinue
