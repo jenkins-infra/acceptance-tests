@@ -46,6 +46,17 @@ switch -Regex ($Args[0]) {
 
 [int]$failed=0
 
+function Test-IsInsideContainer {
+    $foundService = Get-Service -Name cexecsvc -ErrorAction SilentlyContinue
+    if( $foundService -eq $null ) {
+        $false
+    }
+    else {
+        $true
+    }
+}
+
+
 Get-Item -Path Env:\*PROCESSOR*
 Get-Item -Path Env:\OS
 Get-Item -Path Env:\USERNAME
@@ -53,8 +64,12 @@ $username = Get-Item -Path Env:\USERNAME | Select-Object -ExpandProperty Value
 if($username -eq 'jenkins') {
     Write-Host "Running as jenkins user"
 } else {
-    Write-Host "ERROR Running as $username"
-    $failed=$failed+1
+    if(Test-IsInsideContainer) {
+        Write-Host "Running inside container"
+    } else {
+        Write-Host "ERROR Running as $username user"
+        $failed=$failed+1
+    }
 }
 
 try{
