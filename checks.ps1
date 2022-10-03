@@ -56,6 +56,12 @@ function Test-IsInsideContainer {
     }
 }
 
+if(Test-IsInsideContainer) {
+    Write-Host "Running inside container"
+} else {
+    Write-Host "NOT running inside container"
+}
+
 
 Get-Item -Path Env:\*PROCESSOR*
 Get-Item -Path Env:\OS
