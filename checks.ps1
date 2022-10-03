@@ -50,6 +50,8 @@ Get-Childitem -Path Env:* | Sort-Object Name
 
 Get-Service
 
+Invoke-Expression -Command "docker ps"
+
 function Test-IsInsideContainer {
     $foundService = Get-Service -Name cexecsvc -ErrorAction SilentlyContinue
     if( $foundService -eq $null ) {
