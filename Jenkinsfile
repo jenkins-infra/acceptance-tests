@@ -33,7 +33,7 @@ def generateParallelSteps(labels) {
                 if (isUnix()) {
                     sh "bash ./checks.sh " + label
                 } else {
-                    pwsh "checks.ps1 ${env.NODE_NAME}"
+                    pwsh "checks.ps1 " + ${env.NODE_NAME}
                 }
             }
         }
