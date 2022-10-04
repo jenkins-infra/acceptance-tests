@@ -72,7 +72,7 @@ if($username -eq 'jenkins') {
 } else {
     $asDocker = Invoke-Expression -Command "docker ps"
     if($asDocker) {
-        Write-Host "Got docker"
+        Write-Host "Got docker user OK"
     } else {
         Write-Host "ERROR Running as $username user"
         $failed=$failed+1
