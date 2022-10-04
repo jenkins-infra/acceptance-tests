@@ -19,7 +19,7 @@ def sequentialStages = [:]
 // sequentialStages['Memory'] = [ 'highmem', 'highram']
 // sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
 // sequentialStages['JDK'] = [ 'maven-8', 'maven-11', 'maven-17']
-sequentialStages['Docker'] = ['docker-windows']
+sequentialStages['Docker'] = ['maven-windows', 'maven-11-windows', 'docker-windows']
 
 
 // Generate a parallel step for each label in labels
