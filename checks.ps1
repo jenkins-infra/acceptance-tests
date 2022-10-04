@@ -70,7 +70,7 @@ $username = Get-Item -Path Env:\USERNAME | Select-Object -ExpandProperty Value
 if($username -eq 'jenkins') {
     Write-Host "Running as jenkins user"
 } else {
-    if(Invoke-Expression -Command "docker ps" -ne $null) {
+    if(Invoke-Expression -Command "docker ps" -Ne $null) {
         Write-Host "Got docker"
     } else {
         Write-Host "ERROR Running as $username user"
