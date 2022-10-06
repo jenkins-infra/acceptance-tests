@@ -29,7 +29,7 @@ def generateParallelSteps(labels) {
             node(label) {
                 checkout scm
                 if (isUnix()) {
-                    sh "bash ./checks.sh " + label + " ${env.NODE_NAME} "
+                    sh "bash ./checks.sh " + label + " '${env.NODE_NAME}' "
                 } else {
                     pwsh (script: ".\\checks.ps1 '${env.NODE_NAME}' ")
                 }
