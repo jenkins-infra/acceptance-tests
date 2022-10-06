@@ -58,6 +58,7 @@ set -u
 # Java 17 needs to include 'jdk-17' in the directory structure
 if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "label of the node: $1"
+	echo "DEBUG name of the node: $2"
 	jdk="${DefaultJDKVersion}"
 	if [ "$1" = "maven-8" ]; then
 		jdk="jdk-8"
@@ -85,6 +86,7 @@ fi
 # Java 17 needs to include '17.' in the output
 if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "label of the node: $1"
+	echo "DEBUG name of the node: $2"
 	jdk="${DefaultJDKVersion}"
 	if [ "$1" = "maven-8" ]; then
 		jdk="jdk-8"
