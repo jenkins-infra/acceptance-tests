@@ -63,6 +63,8 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 		jdk="jdk-8"
 	elif [ "$1" = "maven-17" ]; then
 		jdk="jdk-17"
+	elif [ "$1" = "jdk17" ]; then
+		jdk="jdk-17"
 	elif [ "$1" = "maven" ]; then
 		jdk="jdk-8"
 	elif [ "$1" = "jdk8" ]; then
@@ -90,7 +92,7 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 		jdk="jdk-8"
 	elif [ "$1" = "maven-17" ]; then
 		jdk="jdk-17"
-	elif [ "$1" = "jdk17"]; then
+	elif [ "$1" = "jdk17" ]; then
 		jdk="jdk-17"
 	elif [ "$1" = "maven" ]; then
 		jdk="jdk-8"
