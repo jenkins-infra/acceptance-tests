@@ -17,7 +17,7 @@ sequentialStages['Tool'] = [ 'maven', 'maven-11', 'maven-17', 'maven-19', 'maven
 sequentialStages['Processor'] = [ 'arm64', 'amd64' ] // Remove ppc64le and s390x until virtual machine available 'ppc64le', 's390x'
 sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows'] // Remove ppc64le and s390x until available again 'ppc64ledocker', 's390xdocker'
 sequentialStages['Memory'] = [ 'highmem', 'highram']
-sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes', 'do']
+sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
