@@ -29,7 +29,7 @@ def generateParallelSteps(labels) {
           sh "bash ./checks.sh " + label + " '${env.NODE_NAME}' "
         } else {
           //pwsh (script: ".\\checks.ps1 '${env.NODE_NAME}' ")
-          env
+          pwsh('dir env:')
           pwsh ('''$ProgressPreference = 'SilentlyContinue' # Disable Progress bar for faster downloads
 $env:GOSS_USE_ALPHA=1
 $env:GOSS_VERSION=0.3.20
