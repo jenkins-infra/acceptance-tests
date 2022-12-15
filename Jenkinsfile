@@ -20,7 +20,7 @@ def generateParallelSteps(labels) {
   for (unboundLabel in labels) {
     def label = unboundLabel // Bind label before the closure
     parallelNodes[label] = {
-      environement {
+      environment {
         GOSS_VERSION = '0.3.20'
       }
       node(label) {
