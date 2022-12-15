@@ -16,24 +16,27 @@ sequentialStages['Windows'] = [ 'vm && windows' ]//'windows-2019', 'windows-2022
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
-    def parallelNodes = [:]
-    for (unboundLabel in labels) {
-        def label = unboundLabel // Bind label before the closure
-        parallelNodes[label] = {
-            node(label) {
-                checkout scm
-                if (isUnix()) {
-                    sh "bash ./checks.sh " + label + " '${env.NODE_NAME}' "
-                } else {
-                    //pwsh (script: ".\\checks.ps1 '${env.NODE_NAME}' ")
-                    pwsh ('''$ProgressPreference = 'SilentlyContinue' # Disable Progress bar for faster downloads
+  def parallelNodes = [:]
+  for (unboundLabel in labels) {
+    def label = unboundLabel // Bind label before the closure
+    parallelNodes[label] = {
+      environement {
+        GOSS_VERSION = '0.3.20'
+      }
+      node(label) {
+        checkout scm
+        if (isUnix()) {
+          sh "bash ./checks.sh " + label + " '${env.NODE_NAME}' "
+        } else {
+          //pwsh (script: ".\\checks.ps1 '${env.NODE_NAME}' ")
+          pwsh ('''$ProgressPreference = 'SilentlyContinue' # Disable Progress bar for faster downloads
 Invoke-WebRequest "https://github.com/goss-org/goss/releases/download/v${env.GOSS_VERSION}/goss-alpha-windows-amd64.exe" -OutFile "C:\\tools\\goss.exe"''')
-                    pwsh (script: "goss -g ./goss-windows.yaml validate --format documentation")
-                }
-            }
+          pwsh (script: "goss -g ./goss-windows.yaml validate --format documentation")
         }
+      }
     }
-    return parallelNodes
+  }
+  return parallelNodes
 }
 
 timeout(unit: 'MINUTES', time:29) {
