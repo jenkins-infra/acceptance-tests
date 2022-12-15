@@ -31,8 +31,10 @@ def generateParallelSteps(labels) {
           //pwsh (script: ".\\checks.ps1 '${env.NODE_NAME}' ")
           env
           pwsh ('''$ProgressPreference = 'SilentlyContinue' # Disable Progress bar for faster downloads
-Write-Host "https://github.com/goss-org/goss/releases/download/v0.3.20/goss-alpha-windows-amd64.exe"
-Invoke-WebRequest "https://github.com/goss-org/goss/releases/download/v0.3.20/goss-alpha-windows-amd64.exe" -OutFile "C:\\tools\\goss.exe"''')
+$env:GOSS_USE_ALPHA=1
+$env:GOSS_VERSION=0.3.20
+Write-Host "https://github.com/goss-org/goss/releases/download/v${GOSS_VERSION}/goss-alpha-windows-amd64.exe"
+Invoke-WebRequest "https://github.com/goss-org/goss/releases/download/v${GOSS_VERSION}/goss-alpha-windows-amd64.exe" -OutFile "C:\\tools\\goss.exe"''')
           pwsh (script: "goss -g ./goss-windows.yaml validate --format documentation")
         }
       }
