@@ -29,7 +29,9 @@ def generateParallelSteps(labels) {
           sh "bash ./checks.sh " + label + " '${env.NODE_NAME}' "
         } else {
           //pwsh (script: ".\\checks.ps1 '${env.NODE_NAME}' ")
+          env
           pwsh ('''$ProgressPreference = 'SilentlyContinue' # Disable Progress bar for faster downloads
+Write-Host "https://github.com/goss-org/goss/releases/download/v${env.GOSS_VERSION}/goss-alpha-windows-amd64.exe"
 Invoke-WebRequest "https://github.com/goss-org/goss/releases/download/v${env.GOSS_VERSION}/goss-alpha-windows-amd64.exe" -OutFile "C:\\tools\\goss.exe"''')
           pwsh (script: "goss -g ./goss-windows.yaml validate --format documentation")
         }
