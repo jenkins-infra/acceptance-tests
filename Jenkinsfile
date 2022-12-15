@@ -12,7 +12,7 @@ properties([
 
 // Define the sequential stages and the parallel steps inside each stage
 def sequentialStages = [:]
-sequentialStages['Windows'] = [ 'windows-2019']//, 'windows-2022'
+sequentialStages['Windows'] = [ 'vm && windows' ]//'windows-2019', 'windows-2022'
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
