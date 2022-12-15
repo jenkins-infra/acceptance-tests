@@ -1,0 +1,6 @@
+file:
+  c:/tools:
+    exists: true
+    mode: "0755"
+    filetype: directory
+    contains: []
