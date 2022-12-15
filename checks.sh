@@ -86,19 +86,21 @@ fi
 # Java 17 needs to include '17.' in the output
 if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "label of the node: $1"
-	echo "DEBUG name of the node: $2"
-	jdk="${DefaultJDKVersion}"
-	if [ "$1" = "maven-8" ]; then
-		jdk="jdk-8"
-	elif [ "$1" = "maven-17" ]; then
-		jdk="jdk-17"
-	elif [ "$1" = "maven" ]; then
-		jdk="jdk-8"
-	elif [ "$1" = "jdk8" ]; then
-		jdk="jdk-8"
-	elif [ "$1" = "kubernetes" ]; then
-		jdk="jdk-8"
-	fi
+
+jdk="${DefaultJDKVersion}"
+	case "$1" in
+  maven | maven-8 |jdk-8 | kubernetes)
+    jdk="jdk-8";;
+  maven-11 | jdk-11)
+    jdk="jdk-11";;
+  maven-17 | jdk-17)
+    jdk="jdk-17";;
+  maven-19 | jdk-19)
+    jdk="jdk-19";;
+  *)
+    echo "Label '$1' specified. Using default jdk."
+  esac
+
 	case ${jdk} in
 	jdk-8)
 		jdknumber="1.8"
@@ -108,6 +110,9 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 		;;
 	jdk-17)
 		jdknumber="17."
+		;;
+  jdk-19)
+		jdknumber="19."
 		;;
 	*)
 		echo "ERROR: JDK not matching the expected ${jdk} for label '$1'"
