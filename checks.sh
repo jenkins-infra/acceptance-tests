@@ -52,6 +52,34 @@ if [[ -z "${JAVA_HOME}" ]]; then
 fi
 set -u
 
+# This check relies on the path of the Java runtime
+# Java 8 needs to include 'jdk-8' in the directory structure
+# Java 11 needs to include 'jdk-11' in the directory structure
+# Java 17 needs to include 'jdk-17' in the directory structure
+if [ $# -ge 1 ] && [ -n "$1" ]; then
+	echo "label of the node: $1"
+	echo "DEBUG name of the node: $2"
+	jdk="${DefaultJDKVersion}"
+	if [ "$1" = "maven-8" ]; then
+		jdk="jdk-8"
+	elif [ "$1" = "maven-17" ]; then
+		jdk="jdk-17"
+	elif [ "$1" = "maven" ]; then
+		jdk="jdk-8"
+	elif [ "$1" = "jdk8" ]; then
+		jdk="jdk-8"
+	elif [ "$1" = "kubernetes" ]; then
+		jdk="jdk-8"
+	fi
+	if [[ "$(mvn -v 2>&1)" != *"${jdk}"* ]]; then
+		echo "ERROR: JDK not matching the expected ${jdk} for label '$1'"
+		mvn -v 2>&1
+		failed=$((failed + 32))
+	else
+		echo "JDK ok ${jdk} for $1"
+	fi
+fi
+
 # This check relies on the java version output of the 'mvn -v' command
 # Java 8 needs to include '1.8' in the output
 # Java 11 needs to include '11.' in the output
@@ -59,7 +87,7 @@ set -u
 if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "label of the node: $1"
 
-	jdk="${DefaultJDKVersion}"
+jdk="${DefaultJDKVersion}"
 	case "$1" in
   maven | maven-8 |jdk-8 | kubernetes)
     jdk="jdk-8";;

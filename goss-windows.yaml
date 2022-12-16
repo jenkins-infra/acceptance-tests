@@ -1,0 +1,5 @@
+file:
+  c:/tools:
+    exists: true
+    filetype: directory
+    contains: []

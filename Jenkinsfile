@@ -7,35 +7,30 @@ properties([
     buildDiscarder(logRotator(numToKeepStr: '15')),
     disableResume(),
     durabilityHint('PERFORMANCE_OPTIMIZED'),
-    pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
+    //pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
 ])
 
 // Define the sequential stages and the parallel steps inside each stage
 def sequentialStages = [:]
-// Labels requested in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPlugin.groovy and https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPluginWithGradle.groovy
-sequentialStages['Tool'] = [ 'maven', 'maven-11', 'maven-17', 'maven-19', 'maven-windows', 'maven-11-windows', 'maven-17-windows', 'maven-19-windows']
-sequentialStages['Processor'] = [ 'arm64', 'amd64' ] // Remove ppc64le and s390x until virtual machine available 'ppc64le', 's390x'
-sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows'] // Remove ppc64le and s390x until available again 'ppc64ledocker', 's390xdocker'
-sequentialStages['Memory'] = [ 'highmem', 'highram']
-sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
+sequentialStages['Windows'] = [ 'vm && windows' ]//'windows-2019', 'windows-2022'
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
-    def parallelNodes = [:]
-    for (unboundLabel in labels) {
-        def label = unboundLabel // Bind label before the closure
-        parallelNodes[label] = {
-            node(label) {
-                if (isUnix()) {
-                    checkout scm
-                    sh 'bash ./checks.sh '+label
-                } else {
-                    bat 'set | findstr PROCESSOR'
-                }
-            }
+  def parallelNodes = [:]
+  for (unboundLabel in labels) {
+    def label = unboundLabel // Bind label before the closure
+    parallelNodes[label] = {
+      node(label) {
+        checkout scm
+        if (isUnix()) {
+          sh "bash ./checks.sh " + label + " '${env.NODE_NAME}' "
+        } else {
+          pwsh (script: ".\\checksgoss.ps1 '${env.NODE_NAME}' ")
         }
+      }
     }
-    return parallelNodes
+  }
+  return parallelNodes
 }
 
 timeout(unit: 'MINUTES', time:29) {
