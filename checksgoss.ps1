@@ -12,7 +12,7 @@ $ProgressPreference = 'SilentlyContinue'
 $GOSS_USE_ALPHA=1
 $GOSS_VERSION=0.3.20
 
-Write-Host "https://github.com/goss-org/goss/releases/download/v$GOSS_VERSION/goss-alpha-windows-amd64.exe"
-Invoke-WebRequest "https://github.com/goss-org/goss/releases/download/v$GOSS_VERSION/goss-alpha-windows-amd64.exe" -OutFile "C:\\tools\\goss.exe"
+Write-Host "https://github.com/goss-org/goss/releases/download/v${GOSS_VERSION}/goss-alpha-windows-amd64.exe"
+Invoke-WebRequest "https://github.com/goss-org/goss/releases/download/v${GOSS_VERSION}/goss-alpha-windows-amd64.exe" -OutFile "C:\\tools\\goss.exe"
 
 Invoke-Command {& goss -g ./goss-windows.yaml validate --format documentation;}
