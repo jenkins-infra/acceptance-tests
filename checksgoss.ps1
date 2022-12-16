@@ -10,7 +10,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
 $GOSS_USE_ALPHA=1
-$gossVersion=0.3.20
+$gossVersion="0.3.20"
 
 Write-Host "https://github.com/goss-org/goss/releases/download/v${gossVersion}/goss-alpha-windows-amd64.exe"
 Invoke-WebRequest "https://github.com/goss-org/goss/releases/download/v${gossVersion}/goss-alpha-windows-amd64.exe" -OutFile "C:\\tools\\goss.exe"
