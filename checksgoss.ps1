@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 # Disable Progress bar for faster downloads
 $ProgressPreference = 'SilentlyContinue'
 
-$GOSS_USE_ALPHA=1
+$env:GOSS_USE_ALPHA=1
 $GOSS_VERSION="0.3.20"
 
 Write-Host "https://github.com/goss-org/goss/releases/download/v${GOSS_VERSION}/goss-alpha-windows-amd64.exe"
