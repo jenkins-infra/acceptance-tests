@@ -12,7 +12,7 @@ node('maven-11') { // Container agent
 	    [ $class: 'GitSCM',
 	      branches: scm.branches, // Assumes the multibranch pipeline checkout branch definition is good enough
 	      extensions: [
-		    [ $class: 'CloneOption', honorRefspec: true, noTags: true ],
+		    [ $class: 'CloneOption', honorRefspec: true, noTags: true, shallow: true, depth: 1 ],
 		    [ $class: 'LocalBranch', localBranch: env.BRANCH_NAME ],
 	      ],
 	      gitTool: scm.gitTool,
