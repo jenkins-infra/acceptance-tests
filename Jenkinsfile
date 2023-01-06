@@ -13,7 +13,6 @@ node('maven-11') { // Container agent
 	      branches: scm.branches, // Assumes the multibranch pipeline checkout branch definition is good enough
 	      extensions: [
 		    [ $class: 'CloneOption', honorRefspec: true, noTags: true ],
-		    [ $class: 'LocalBranch', localBranch: env.BRANCH_NAME ],
 	      ],
 	      userRemoteConfigs: scm.userRemoteConfigs // Assumes the multibranch pipeline checkout remoteconfig is good enough
 	    ]
