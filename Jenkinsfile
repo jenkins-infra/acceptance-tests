@@ -6,7 +6,7 @@ properties([
     pipelineTriggers([cron('@hourly')]),           // Run once an hour
 ])
 
-node('linux') {
+node('maven-11') { // Container agent
     stage('Run the tests') {
 	checkout(
 	    [ $class: 'GitSCM',
