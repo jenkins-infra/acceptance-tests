@@ -1,11 +1,9 @@
 #!/usr/bin/env groovy
 
-// Only one build running at a time, stop prior build if new build starts
-def buildNumber = BUILD_NUMBER as int; if (buildNumber > 1) milestone(buildNumber - 1); milestone(buildNumber) // Thanks to jglick
-
 properties([
-    [$class: 'jenkins.model.BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '5']],
-    pipelineTriggers([cron('@hourly')]),
+    buildDiscarder(logRotator(numToKeepStr: '5')), // Keep up to 5 builds
+    disableConcurrentBuilds(abortPrevious: true),  // Only run one build at a time
+    pipelineTriggers([cron('@hourly')]),           // Run once an hour
 ])
 
 node('docker') {
