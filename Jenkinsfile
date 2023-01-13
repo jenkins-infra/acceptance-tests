@@ -14,8 +14,8 @@ properties([
 def sequentialStages = [:]
 // Labels requested in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPlugin.groovy and https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPluginWithGradle.groovy
 sequentialStages['Tool'] = [ 'maven', 'maven-11', 'maven-17', 'maven-19', 'maven-windows', 'maven-11-windows', 'maven-17-windows', 'maven-19-windows']
-sequentialStages['Processor'] = [ 'arm64', 'amd64' ] // Remove ppc64le and s390x until virtual machine available 'ppc64le', 's390x'
-sequentialStages['Docker'] = [ 'arm64docker', 'docker', 'docker-windows'] // Remove ppc64le and s390x until available again 'ppc64ledocker', 's390xdocker'
+sequentialStages['Processor'] = [ 'arm64', 's390x', 'amd64' ]
+sequentialStages['Docker'] = [ 'arm64docker', 's390xdocker', 'docker', 'docker-windows']
 sequentialStages['Memory'] = [ 'highmem', 'highram']
 sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
 
