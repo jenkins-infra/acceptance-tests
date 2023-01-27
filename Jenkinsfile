@@ -6,12 +6,13 @@
  */
 
 properties([
-    buildDiscarder(logRotator(numToKeepStr: '5')),
-    pipelineTriggers([cron('@hourly')]),
-    // Only one build running at a time, stop prior build if new build starts
-    disableConcurrentBuilds(abortPrevious: true),
+    buildDiscarder(logRotator(numToKeepStr: '15')),
     // Do not resume build after controller restart
     disableResume(),
+    durabilityHint('PERFORMANCE_OPTIMIZED'),
+    // Only one build running at a time, stop prior build if new build starts
+    disableConcurrentBuilds(abortPrevious: true),
+    pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
 ])
 
 node('docker') {
