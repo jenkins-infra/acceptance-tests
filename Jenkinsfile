@@ -24,7 +24,7 @@ node('docker') {
 
             stage('Add the rpm key') {
                 sh 'wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo'
-                sh 'rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key'
+                sh 'rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key'
             }
 
             stage('Install Jenkins from rpm') {
