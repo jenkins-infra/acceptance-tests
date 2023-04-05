@@ -44,6 +44,6 @@ checkRedirect "2.375.3"          "dynamic-stable-2.375.3"
 checkRedirect "2.387.1"          "dynamic-stable-2.387.1"
 
 checkRedirect "2.388"            "dynamic-2.388"
-checkRedirect "2.397"            "dynamic-2.388"
+checkRedirect "2.399"            "dynamic-2.388"
 
 exit $result
