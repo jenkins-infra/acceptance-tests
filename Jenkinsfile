@@ -32,7 +32,7 @@ def generateParallelSteps(labels) {
                         }
 
                         stage('Add the apt key') {
-                            sh 'curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null'
+                            sh 'curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null'
                         }
 
                         stage('Install Jenkins from apt') {
