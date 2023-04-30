@@ -1,3 +1,7 @@
 = Verify content of the update site
 
-http://updates.jenkins-ci.org/
+https://updates.jenkins.io provides version-specific update sites so that the update site can offer plugin releases compatible with your version of Jenkins.
+The `?version=` query parameter is used to request a version specific update site.
+
+The current implementation of the site uses redirect rules to forward requests to the most appropriate tiered update site.
+More details are available in the description of link:https://github.com/jenkins-infra/update-center2/blob/master/site/LAYOUT.md#regular-tiered-update-sites-lts-and-weekly["regular tiered update sites (LTS and weekly)].
