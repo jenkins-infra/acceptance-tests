@@ -56,12 +56,13 @@ set -u
 # Java 8 needs to include '1.8' in the output
 # Java 11 needs to include '11.' in the output
 # Java 17 needs to include '17.' in the output
-if [ $# -ge 1 ] && [ -n "$1" ]; then
+# kubernetes label does not commit to a specific Java version, don't check it
+if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" -ne "kubernetes"]; then
 	echo "label of the node: $1"
 
 	jdk="${DefaultJDKVersion}"
 	case "$1" in
-	maven | maven-8 | jdk-8 | kubernetes)
+	maven | maven-8 | jdk-8)
 		jdk="jdk-8";;
 	maven-11 | jdk-11)
 		jdk="jdk-11";;
