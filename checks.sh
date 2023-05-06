@@ -61,17 +61,17 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 
 	jdk="${DefaultJDKVersion}"
 	case "$1" in
-  maven | maven-8 |jdk-8)
-    jdk="jdk-8";;
-  maven-11 | jdk-11)
-    jdk="jdk-11";;
-  maven-17 | jdk-17 | kubernetes)
-    jdk="jdk-17";;
-  maven-19 | jdk-19)
-    jdk="jdk-19";;
-  *)
-    echo "Label '$1' specified. Using default jdk."
-  esac
+	maven | maven-8 | jdk-8 | kubernetes)
+		jdk="jdk-8";;
+	maven-11 | jdk-11)
+		jdk="jdk-11";;
+	maven-17 | jdk-17)
+		jdk="jdk-17";;
+	maven-19 | jdk-19)
+		jdk="jdk-19";;
+	*)
+		echo "Label '$1' specified. Using default jdk."
+	esac
 
 	case ${jdk} in
 	jdk-8)
@@ -83,7 +83,7 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 	jdk-17)
 		jdknumber="17."
 		;;
-  jdk-19)
+	jdk-19)
 		jdknumber="19."
 		;;
 	*)
@@ -93,7 +93,7 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 		;;
 	esac
 
-    JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
+	JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
 	if [[ "${JDKfromMaven}" != *"${jdknumber}"* ]]; then
 		echo "ERROR: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '$1'"
 		failed=$((failed + 64))
