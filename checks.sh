@@ -61,11 +61,11 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 
 	jdk="${DefaultJDKVersion}"
 	case "$1" in
-  maven | maven-8 |jdk-8 | kubernetes)
+  maven | maven-8 |jdk-8)
     jdk="jdk-8";;
   maven-11 | jdk-11)
     jdk="jdk-11";;
-  maven-17 | jdk-17)
+  maven-17 | jdk-17 | kubernetes)
     jdk="jdk-17";;
   maven-19 | jdk-19)
     jdk="jdk-19";;
