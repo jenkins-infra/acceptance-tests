@@ -27,11 +27,6 @@ function checkRedirect() {
   fi
 }
 
-checkRedirect "2.332.1.1"        "current"                # Unrecognized version takes current
-checkRedirect "2.332.1"          "dynamic-stable-2.332.1"
-checkRedirect "2.332.2"          "dynamic-stable-2.332.2"
-checkRedirect "2.332.3"          "dynamic-stable-2.332.3"
-
 checkRedirect "2.361.1"          "dynamic-stable-2.361.1"
 checkRedirect "2.361.2"          "dynamic-stable-2.361.2"
 checkRedirect "2.361.3"          "dynamic-stable-2.361.3"
@@ -41,12 +36,14 @@ checkRedirect "2.375.1"          "dynamic-stable-2.375.1"
 checkRedirect "2.375.2"          "dynamic-stable-2.375.1"
 checkRedirect "2.375.3"          "dynamic-stable-2.375.3"
 
+checkRedirect "2.387.1.1"        "current"                # Unrecognized version takes current
+
 checkRedirect "2.387.1"          "dynamic-stable-2.387.1"
 
-checkRedirect "2.388"            "dynamic-2.388"
-checkRedirect "2.399"            "dynamic-2.393"
 checkRedirect "2.400"            "dynamic-2.393"
 checkRedirect "2.401"            "dynamic-2.393"
 checkRedirect "2.402"            "dynamic-2.393"
+checkRedirect "2.403"            "dynamic-2.403"
+checkRedirect "2.404"            "dynamic-2.403"
 
 exit $result
