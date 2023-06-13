@@ -16,7 +16,6 @@ def sequentialStages = [:]
 sequentialStages['Tool'] = [ 'maven', 'maven-11', 'maven-17', 'maven-19', 'maven-windows', 'maven-11-windows', 'maven-17-windows', 'maven-19-windows']
 sequentialStages['Processor'] = [ 's390x', 'amd64' ] // 'arm64', not tested, unavailable
 sequentialStages['Docker'] = [ 's390xdocker', 'docker', 'docker-windows'] //'arm64docker', not tested, unavailable
-sequentialStages['Memory'] = [ 'highmem', 'highram']
 sequentialStages['Cloud & Orchestrator'] = [ 'aci', 'aws', 'azure', 'kubernetes']
 
 // Generate a parallel step for each label in labels
