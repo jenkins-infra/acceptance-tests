@@ -57,7 +57,7 @@ set -u
 # Java 11 needs to include '11.' in the output
 # Java 17 needs to include '17.' in the output
 # kubernetes label does not commit to a specific Java version, don't check it
-if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" -ne "kubernetes"]; then
+if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" != "kubernetes" ]; then
 	echo "label of the node: $1"
 
 	jdk="${DefaultJDKVersion}"
