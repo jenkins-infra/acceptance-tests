@@ -43,10 +43,10 @@ checkRedirect "2.387.1"          "dynamic-stable-2.387.1"
 checkRedirect "2.400"            "dynamic-2.393"
 checkRedirect "2.401"            "dynamic-2.393"
 checkRedirect "2.402"            "dynamic-2.402"
-checkRedirect "2.403"            "dynamic-2.403"
 checkRedirect "2.404"            "dynamic-2.403"
 checkRedirect "2.405"            "dynamic-2.403"
-checkRedirect "2.406"            "dynamic-2.403"
-checkRedirect "2.407"            "dynamic-2.403"
+checkRedirect "2.406"            "dynamic-2.406"
+checkRedirect "2.407"            "dynamic-2.406"
+checkRedirect "2.413"            "dynamic-2.406"
 
 exit $result
