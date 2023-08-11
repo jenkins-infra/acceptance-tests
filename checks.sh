@@ -70,6 +70,8 @@ if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" != "kubernetes" ]; then
 		jdk="jdk-17";;
 	maven-19 | jdk-19)
 		jdk="jdk-19";;
+  	maven-21 | jdk-21)
+		jdk="jdk-21";;
 	*)
 		echo "Label '$1' specified. Using default jdk."
 	esac
@@ -86,6 +88,9 @@ if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" != "kubernetes" ]; then
 		;;
 	jdk-19)
 		jdknumber="19."
+		;;
+	jdk-21)
+		jdknumber="21."
 		;;
 	*)
 		echo "ERROR: JDK not matching the expected ${jdk} for label '$1'"
