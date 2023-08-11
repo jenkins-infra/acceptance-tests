@@ -90,7 +90,7 @@ if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" != "kubernetes" ]; then
 		jdknumber="19."
 		;;
 	jdk-21)
-		jdknumber="21."
+		jdknumber="21-beta"
 		;;
 	*)
 		echo "ERROR: JDK not matching the expected ${jdk} for label '$1'"
