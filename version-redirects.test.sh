@@ -48,7 +48,7 @@ checkRedirect "2.405"            "dynamic-2.403"
 checkRedirect "2.406"            "dynamic-2.406"
 checkRedirect "2.407"            "dynamic-2.406"
 checkRedirect "2.413"            "dynamic-2.410"
-checkRedirect "2.414"            "dynamic-2.410"
+checkRedirect "2.414"            "dynamic-2.414"
 checkRedirect "2.415"            "dynamic-2.415"
 checkRedirect "2.416"            "dynamic-2.415"
 
