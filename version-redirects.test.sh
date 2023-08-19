@@ -51,5 +51,8 @@ checkRedirect "2.413"            "dynamic-2.410"
 checkRedirect "2.414"            "dynamic-2.414"
 checkRedirect "2.415"            "dynamic-2.415"
 checkRedirect "2.416"            "dynamic-2.415"
+checkRedirect "2.417"            "dynamic-2.415"
+checkRedirect "2.418"            "dynamic-2.415"
+checkRedirect "2.419"            "dynamic-2.415"
 
 exit $result
