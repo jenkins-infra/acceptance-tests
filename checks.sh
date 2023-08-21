@@ -3,7 +3,7 @@ set -eux -o pipefail
 
 DefaultLocale="en_US.utf8"
 DefaultMavenVersion="3.9.4"
-DefaultJDKVersion="jdk-11"
+DefaultJDKVersion="jdk-17"
 
 failed=0
 
