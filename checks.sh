@@ -4,6 +4,12 @@ set -eux -o pipefail
 DefaultLocale="en_US.utf8"
 DefaultMavenVersion="3.9.4"
 DefaultJDKVersion="jdk-17"
+DefaultUser="jenkins"
+
+# Allow Mark Waite to run the same script on his home network
+if [ -v JENKINS_ADVERTISED_HOSTNAME ]; then
+	DefaultUser="jagent"
+fi
 
 failed=0
 
@@ -27,15 +33,15 @@ else
 	failed=$((failed + 1))
 fi
 
-if getent passwd jenkins >/dev/null; then
-	echo "'jenkins' user exists"
+if getent passwd ${DefaultUser} >/dev/null; then
+	echo "'${DefaultUser}' user exists"
 else
-	echo "ERROR: 'jenkins' user does not exist"
+	echo "ERROR: '${DefaultUser}' user does not exist"
 	failed=$((failed + 2))
 fi
 
-if [[ "$(whoami)" != "jenkins" ]]; then
-	echo "ERROR: Not running as 'jenkins' user"
+if [[ "$(whoami)" != "${DefaultUser}" ]]; then
+	echo "ERROR: Not running as '${DefaultUser}' user"
 	echo "whoami: $(whoami)"
 	failed=$((failed + 4))
 fi
