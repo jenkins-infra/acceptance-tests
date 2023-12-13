@@ -58,6 +58,17 @@ if [[ -z "${JAVA_HOME}" ]]; then
 fi
 set -u
 
+# Check for Maven CLI
+mvn -v 2>/dev/null >/dev/null || {
+	set +e
+	echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:";
+	echo "${PATH}";
+	which mvn;
+	mvn -v;
+	set -e
+	exit 1;
+}
+
 # This check relies on the java version output of the 'mvn -v' command
 # Java 8 needs to include '1.8' in the output
 # Java 11 needs to include '11.' in the output
@@ -74,7 +85,7 @@ if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" != "kubernetes" ]; then
 		jdk="jdk-11";;
 	maven-17 | jdk-17)
 		jdk="jdk-17";;
-  	maven-21 | jdk-21)
+	maven-21 | jdk-21)
 		jdk="jdk-21";;
 	*)
 		echo "Label '$1' specified. Using default jdk."

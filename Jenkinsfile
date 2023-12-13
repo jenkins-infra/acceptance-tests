@@ -14,8 +14,8 @@ properties([
 def sequentialStages = [:]
 // Labels requested in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPlugin.groovy and https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPluginWithGradle.groovy
 sequentialStages['Tool'] = [ 'maven', 'maven-11', 'maven-17', 'maven-21', 'maven-windows', 'maven-11-windows', 'maven-17-windows', 'maven-21-windows']
-sequentialStages['Processor'] = [ 'amd64' ] // 'arm64', not tested, unavailable
-sequentialStages['Docker'] = [ 'docker', 'docker-windows'] //'arm64docker', not tested, unavailable
+sequentialStages['Processor'] = [ 's390x', 'amd64' ] // 'arm64', not tested, unavailable
+sequentialStages['Docker'] = [ 's390xdocker', 'docker', 'docker-windows'] //'arm64docker', not tested, unavailable
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
