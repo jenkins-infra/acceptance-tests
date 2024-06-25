@@ -27,9 +27,7 @@ function checkRedirect() {
   fi
 }
 
-checkRedirect "2.401.1.1"        "current"                # Unrecognized version takes current
-
-checkRedirect "2.401.3"          "dynamic-stable-2.401.3"
+checkRedirect "2.414.1.1"        "current"                # Unrecognized version takes current
 
 checkRedirect "2.414.3"          "dynamic-stable-2.414.3"
 
