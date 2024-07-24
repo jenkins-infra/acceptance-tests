@@ -79,13 +79,13 @@ if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" != "kubernetes" ]; then
 
 	jdk="${DefaultJDKVersion}"
 	case "$1" in
-	*maven | *maven-8 | *jdk-8)
+	*maven | *maven-8 | *jdk-8 | *maven8)
 		jdk="jdk-8";;
-	*maven-11 | *jdk-11)
+	*maven-11 | *jdk-11 | *maven11)
 		jdk="jdk-11";;
-	*maven-17 | *jdk-17)
+	*maven-17 | *jdk-17 | *maven17)
 		jdk="jdk-17";;
-	*maven-21 | *jdk-21)
+	*maven-21 | *jdk-21 | *maven21)
 		jdk="jdk-21";;
 	*)
 		echo "Label '$1' specified. Using default jdk."
