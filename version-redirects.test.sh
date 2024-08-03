@@ -27,32 +27,35 @@ function checkRedirect() {
   fi
 }
 
-checkRedirect "2.414.1.1"        "current"                # Unrecognized version takes current
+checkRedirect "2.426.1.1"        "current"                # Unrecognized version takes current
 
-checkRedirect "2.414.3"          "dynamic-stable-2.414.3"
-
-checkRedirect "2.426.1"          "dynamic-stable-2.426.1"
-checkRedirect "2.426.2"          "dynamic-stable-2.426.2"
 checkRedirect "2.426.3"          "dynamic-stable-2.426.3"
 
 checkRedirect "2.440.1"          "dynamic-stable-2.440.1"
 checkRedirect "2.440.2"          "dynamic-stable-2.440.2"
 checkRedirect "2.440.3"          "dynamic-stable-2.440.3"
 
-checkRedirect "2.443"            "dynamic-2.443"
-checkRedirect "2.444"            "dynamic-2.444"
-checkRedirect "2.445"            "dynamic-2.444"
-checkRedirect "2.446"            "dynamic-2.446"
-checkRedirect "2.447"            "dynamic-2.446"
-checkRedirect "2.448"            "dynamic-2.446"
-checkRedirect "2.449"            "dynamic-2.446"
-checkRedirect "2.450"            "dynamic-2.450"
-checkRedirect "2.451"            "dynamic-2.450"
-checkRedirect "2.452"            "dynamic-2.452"
+checkRedirect "2.452.1"          "dynamic-stable-2.452.1"
+checkRedirect "2.452.2"          "dynamic-stable-2.452.2"
+checkRedirect "2.452.3"          "dynamic-stable-2.452.3"
+
 checkRedirect "2.453"            "dynamic-2.453"
 checkRedirect "2.454"            "dynamic-2.454"
 checkRedirect "2.455"            "dynamic-2.454"
 checkRedirect "2.456"            "dynamic-2.454"
 checkRedirect "2.457"            "dynamic-2.454"
+checkRedirect "2.458"            "dynamic-2.454"
+checkRedirect "2.459"            "dynamic-2.459"
+checkRedirect "2.460"            "dynamic-2.460"
+checkRedirect "2.461"            "dynamic-2.460"
+checkRedirect "2.462"            "dynamic-2.460"
+checkRedirect "2.463"            "dynamic-2.460"
+checkRedirect "2.464"            "dynamic-2.460"
+checkRedirect "2.465"            "dynamic-2.460"
+checkRedirect "2.466"            "dynamic-2.460"
+checkRedirect "2.467"            "dynamic-2.460"
+checkRedirect "2.468"            "dynamic-2.460"
+checkRedirect "2.469"            "dynamic-2.460"
+checkRedirect "2.470"            "dynamic-2.460"
 
 exit $result
