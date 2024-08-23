@@ -2,7 +2,7 @@
 set -eux -o pipefail
 
 DefaultLocale="en_US.utf8"
-DefaultMavenVersion="3.9.8"
+DefaultMavenVersion="3.9.9"
 DefaultJDKVersion="jdk-17"
 DefaultUser="jenkins"
 
