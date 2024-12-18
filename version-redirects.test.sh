@@ -10,7 +10,7 @@ function checkRedirect() {
   version="$1"
   target="$2"
   echo ====== $version $target ======
-  stderr="$(curl -vIL "${UPDATE_CENTER}/update-center.json?id=default&version=${version}" 2>&1 > /dev/null)"
+  stderr="$(curl -sSIL "${UPDATE_CENTER}/update-center.json?id=default&version=${version}" 2>&1 > /dev/null)"
   header="$(grep -i 'location:' <<< "$stderr" | sed 's,^.*[.]jenkins[.]io/,jenkins.io/,g' | tr -d '\r')"
   #target="$( sed 's~.*/\([^/]*\)/update-center.json~\1~' <<< "$header")"
 
