@@ -30,41 +30,23 @@ function checkRedirect() {
   fi
 }
 
-checkRedirect "2.426.1.1"        "current"                # Unrecognized version takes current
-
-checkRedirect "2.426.3"          "dynamic-stable-2.426.3"
+checkRedirect "2.440.1.1"        "update-center/current" # Unrecognized version takes current
 
 checkRedirect "2.440.1"          "dynamic-stable-2.440.1"
-checkRedirect "2.440.2"          "dynamic-stable-2.440.2"
 checkRedirect "2.440.3"          "dynamic-stable-2.440.3"
 
 checkRedirect "2.452.1"          "dynamic-stable-2.452.1"
-checkRedirect "2.452.2"          "dynamic-stable-2.452.2"
 checkRedirect "2.452.3"          "dynamic-stable-2.452.3"
 
 checkRedirect "2.462.1"          "dynamic-stable-2.462.1"
-checkRedirect "2.462.2"          "dynamic-stable-2.462.2"
 checkRedirect "2.462.3"          "dynamic-stable-2.462.3"
 
-checkRedirect "2.453"            "dynamic-2.453"
-checkRedirect "2.454"            "dynamic-2.454"
-checkRedirect "2.455"            "dynamic-2.454"
-checkRedirect "2.456"            "dynamic-2.454"
-checkRedirect "2.457"            "dynamic-2.454"
-checkRedirect "2.458"            "dynamic-2.454"
-checkRedirect "2.459"            "dynamic-2.459"
-checkRedirect "2.460"            "dynamic-2.460"
-checkRedirect "2.461"            "dynamic-2.460"
-checkRedirect "2.462"            "dynamic-2.462"
-checkRedirect "2.463"            "dynamic-2.463"
-checkRedirect "2.464"            "dynamic-2.464"
-checkRedirect "2.465"            "dynamic-2.464"
-checkRedirect "2.466"            "dynamic-2.464"
-checkRedirect "2.467"            "dynamic-2.464"
-checkRedirect "2.468"            "dynamic-2.464"
-checkRedirect "2.469"            "dynamic-2.464"
-checkRedirect "2.470"            "dynamic-2.464"
+checkRedirect "2.479.1"          "dynamic-stable-2.479.1"
 
-checkRedirect "2.479"            "dynamic-2.479"
+checkRedirect "2.486"            "dynamic-2.482"
+checkRedirect "2.487"            "dynamic-2.482"
+checkRedirect "2.488"            "dynamic-2.482"
+checkRedirect "2.489"            "dynamic-2.489"
+checkRedirect "2.490"            "dynamic-2.489"
 
 exit $result
