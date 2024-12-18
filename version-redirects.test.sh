@@ -18,10 +18,13 @@ function checkRedirect() {
   if [[ "$header" != *"$expected" ]]; then
     echo >&2 "Not redirected to correct update center for ${version}"
     echo >&2 "  Expected: $expected"
-    if [ -z "$header" ]; then
-      echo >&2 "    Actual: $stderr"
+    if [ -n "$header" ]; then
+      echo >&2 "    Actual header: $header"
     else
-      echo >&2 "    Actual: $header"
+      echo >&2 "    Actual header: is unexpectedly empty"
+    fi
+    if [ -n "$stderr" ]; then
+      echo >&2 "    Actual stderr: $stderr"
     fi
     result=1
   fi
