@@ -1,1 +1,5 @@
 # Check Maven Cache
+
+This pipeline (`Jenkinsfile`) runs in ci.jenkins.io and is responsible to monitor the Maven cache archive.
+
+Ref. link:https://github.com/jenkins-infra/helpdesk/issues/4525[].
