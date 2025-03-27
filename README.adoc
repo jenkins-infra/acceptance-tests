@@ -1,0 +1,3 @@
+= Jenkins infrastructure tests branch
+
+This branch is aim for tests for the Jenkins projects infrastructure.
