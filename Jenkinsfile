@@ -28,7 +28,9 @@ def generateParallelSteps(labels) {
             node(label) {
                 if (isUnix()) {
                     checkout scm
-                    sh 'bash ./checks.sh '+label
+                    withEnv(["NODE_LABEL=${label}"]) {
+                        sh 'bash ./checks.sh "${NODE_LABEL}"'
+                    }
                 } else {
                     bat 'set | findstr PROCESSOR'
                 }
