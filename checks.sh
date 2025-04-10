@@ -73,14 +73,12 @@ mvn -v 2>/dev/null >/dev/null || {
 # Java 8 needs to include '1.8' in the output
 # Java 11 needs to include '11.' in the output
 # Java 17 needs to include '17.' in the output
-# kubernetes label does not commit to a specific Java version, don't check it
-# amd64 label does not commit to a specific Java version, don't check it
-if [ $# -ge 1 ] && [ -n "$1" ] && [ "$1" != "amd64" ] && [ "$1" != "kubernetes" ]; then
+if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "label of the node: $1"
 
 	jdk="${DefaultJDKVersion}"
 	case "$1" in
-	*maven | *maven-8 | *jdk-8 | *maven8)
+	*maven-8 | *jdk-8 | *maven8)
 		jdk="jdk-8";;
 	*maven-11 | *jdk-11 | *maven11)
 		jdk="jdk-11";;
