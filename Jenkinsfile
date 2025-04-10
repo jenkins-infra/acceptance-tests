@@ -17,7 +17,7 @@ sequentialStages['Maven and JDK'] = [ 'maven-8', 'maven-11', 'maven-17', 'maven-
 sequentialStages['VM Types'] = [ 'ubuntu-22-amd64-maven8', 'ubuntu-22-amd64-maven11', 'ubuntu-22-amd64-maven17', 'ubuntu-22-amd64-maven21', 'ubuntu-22-arm64-maven17', 'ubuntu-22-arm64-maven21', 'ubuntu-22-amd64-highmem-maven17']
 sequentialStages['Linux Processors'] = [ 's390x', 'linux-amd64', 'linux-arm64']
 sequentialStages['Docker Platforms'] = [ 's390xdocker', 'docker', 'docker-windows', 'arm64docker']
-sequentialStages['Spot and OnDemand'] = [ 'maven-21 && spot', 'maven-21 && nonspot', 'maven-17-windows && spot', 'maven-17-windows && nonspot', 'docker && spot', 'docker && nonspot', 'docker-highmem-nonspot'] // Pipeline Library (mostly), but also Docker-*agent and Jenkins ATH
+sequentialStages['Spot and OnDemand'] = [ 'maven-17-windows && spot', 'maven-17-windows && nonspot', 'docker && spot', 'docker && nonspot', 'docker-highmem-nonspot'] // Pipeline Library (mostly), but also Docker-*agent and Jenkins ATH
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
