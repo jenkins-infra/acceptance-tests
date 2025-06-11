@@ -3,7 +3,7 @@ set -eux -o pipefail
 
 DefaultLocale="en_US.utf8"
 DefaultMavenVersion="3.9.9"
-DefaultJDKVersion="jdk-17"
+DefaultJDKVersion="jdk-21"
 DefaultUser="jenkins"
 
 # Allow Mark Waite to run the same script on his home network
