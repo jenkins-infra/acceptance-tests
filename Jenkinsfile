@@ -13,7 +13,7 @@ properties([
 // Define the sequential stages and the parallel steps inside each stage
 def sequentialStages = [:]
 // Labels requested in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPlugin.groovy and https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPluginWithGradle.groovy
-sequentialStages['Maven and JDK'] = [ 'maven-8', 'maven-11', 'maven-17', 'maven-21', 'maven-8-windows', 'maven-11-windows', 'maven-17-windows', 'maven-21-windows']
+sequentialStages['Maven and JDK'] = [ 'maven-8', 'maven-11', 'maven-17', 'maven-21', 'maven-25', 'maven-8-windows', 'maven-11-windows', 'maven-17-windows', 'maven-21-windows', 'maven-25-windows']
 sequentialStages['VM Types'] = [ 'ubuntu-22-amd64-maven8', 'ubuntu-22-amd64-maven11', 'ubuntu-22-amd64-maven17', 'ubuntu-22-amd64-maven21', 'ubuntu-22-arm64-maven17', 'ubuntu-22-arm64-maven21', 'ubuntu-22-amd64-highmem-maven17']
 sequentialStages['Linux Processors'] = [ 's390x', 'linux-amd64', 'linux-arm64']
 sequentialStages['Docker Platforms'] = [ 's390xdocker', 'docker', 'docker-windows', 'arm64docker']
