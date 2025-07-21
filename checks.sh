@@ -87,7 +87,7 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 	*maven-21 | *jdk-21 | *maven21)
 		jdk="jdk-21";;
 	*maven-25 | *jdk-25 | *maven25)
-		jdk="jdk-21";;
+		jdk="jdk-25";;
 	*)
 		echo "Label '$1' specified. Using default jdk."
 	esac
