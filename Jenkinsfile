@@ -32,12 +32,14 @@ def generateParallelSteps(labels) {
                         }
 
                         stage('Add the apt key') {
-                            sh 'curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null'
+                            sh 'curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2026.key | tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null'
                         }
 
                         stage('Install Jenkins from apt') {
-                            sh 'echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/ | tee /etc/apt/sources.list.d/jenkins.list > /dev/null'
-                            sh 'apt-get update && apt-get install -qy jenkins'
+                            sh  '''
+                                echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/ | tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+                                apt-get update && apt-get install -qy jenkins
+                                '''
                         }
                     }
                 }
