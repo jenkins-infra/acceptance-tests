@@ -1,0 +1,5 @@
+# Check docker image build
+
+This test ensures the docker controller image can be build (not pushed) on Linux and Windows.
+
+It allows the choice of any combination of agent label(s) and target(s) per agent to build.
