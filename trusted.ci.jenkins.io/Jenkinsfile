@@ -72,8 +72,8 @@ parallel "linux": {
       bat 'java -version'
       bat 'mvn -v'
       bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
-      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
     }
   }
 },
@@ -83,8 +83,8 @@ parallel "linux": {
       bat 'java -version'
       bat 'mvn -v'
       bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
-      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
     }
   }
 },
@@ -94,8 +94,8 @@ parallel "linux": {
       bat 'java -version'
       bat 'mvn -v'
       bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
-      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
     }
   }
 },
@@ -105,8 +105,8 @@ parallel "linux": {
       bat 'java -version'
       bat 'mvn -v'
       bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
-      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
     }
   }
 },
@@ -116,8 +116,8 @@ parallel "linux": {
       bat 'java -version'
       bat 'mvn -v'
       bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
-      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
     }
   }
 },
@@ -127,8 +127,8 @@ parallel "linux": {
       bat 'java -version'
       bat 'mvn -v'
       bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
-      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
     }
   }
 },
@@ -138,8 +138,8 @@ parallel "linux": {
       bat 'java -version'
       bat 'mvn -v'
       bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
-      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
     }
   }
 }
