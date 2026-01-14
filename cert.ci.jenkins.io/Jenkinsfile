@@ -3,6 +3,8 @@ parallel "linux": {
     node('linux') {
       sh 'java -version'
       sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
       
       /** TODO: uncomment when adding JDK25
       String jdk25 = tool name: "jdk-25", type: 'jdk'
@@ -38,7 +40,10 @@ parallel "linux": {
     node('windows') {
       bat 'java -version'
       bat 'mvn -v'
-      
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
+      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
+
       /** TODO: uncomment when adding JDK25
       String jdk25 = tool name: "jdk-25", type: 'jdk'
       withEnv(["PATH+JDK=${jdk25}/bin", "JAVA_HOME=${jdk25}"]) {
@@ -73,6 +78,8 @@ parallel "linux": {
     node('ubuntu-22-amd64-maven-11') {
       sh 'java -version'
       sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
     }
   }
 },
@@ -81,6 +88,8 @@ parallel "linux": {
     node('ubuntu-22-amd64-maven-17') {
       sh 'java -version'
       sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
     }
   }
 },
@@ -89,6 +98,8 @@ parallel "linux": {
     node('ubuntu-22-amd64-maven-21') {
       sh 'java -version'
       sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
     }
   }
 },
@@ -97,6 +108,9 @@ parallel "linux": {
     node('win-2019-amd64-maven-11') {
       bat 'java -version'
       bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
+      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
     }
   }
 },
@@ -105,6 +119,9 @@ parallel "linux": {
     node('win-2019-amd64-maven-17') {
       bat 'java -version'
       bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
+      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
     }
   }
 },
@@ -113,6 +130,9 @@ parallel "linux": {
     node('win-2019-amd64-maven-21') {
       bat 'java -version'
       bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
+      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
     }
   }
 },
@@ -121,6 +141,9 @@ parallel "linux": {
     node('win-2025-amd64-maven-25') {
       bat 'java -version'
       bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Select-Object DeviceID, Manufacturer, Name, NumberOfCores, NumberOfLogicalProcessors'
+      pwsh 'Get-ComputerInfo | Select-Object OsName, OsBuildNumber, WindowsVersion'
     }
   }
 }
