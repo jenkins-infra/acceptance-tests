@@ -1,0 +1,4 @@
+= Pipeline Job used by the Infra Team to validate agent allocation on trusted.ci.jenkins.io
+
+This test allocates each of trusted.ci.jenkins.io agent types and performs a trivial step on the agent.
+Timeout fails the job if it does not complete within half an hour.
