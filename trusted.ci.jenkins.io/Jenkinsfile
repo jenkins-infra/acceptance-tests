@@ -31,8 +31,8 @@ parallel "linux": {
     node('ubuntu-22-amd64-maven-11') {
       sh 'java -version'
       sh 'mvn -v'
-      sh 'cat /proc/cpuinfo'
       sh 'docker info'
+      sh 'cat /proc/cpuinfo'
     }
   }
 },
@@ -41,8 +41,8 @@ parallel "linux": {
     node('ubuntu-22-amd64-maven-17') {
       sh 'java -version'
       sh 'mvn -v'
-      sh 'cat /proc/cpuinfo'
       sh 'docker info'
+      sh 'cat /proc/cpuinfo'
     }
   }
 },
@@ -51,8 +51,8 @@ parallel "linux": {
     node('ubuntu-22-amd64-maven-21') {
       sh 'java -version'
       sh 'mvn -v'
-      sh 'cat /proc/cpuinfo'
       sh 'docker info'
+      sh 'cat /proc/cpuinfo'
     }
   }
 },
@@ -61,8 +61,8 @@ parallel "linux": {
     node('ubuntu-22-arm64-maven-21') {
       sh 'java -version'
       sh 'mvn -v'
-      sh 'cat /proc/cpuinfo'
       sh 'docker info'
+      sh 'cat /proc/cpuinfo'
     }
   }
 },
