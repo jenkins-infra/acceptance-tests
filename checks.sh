@@ -2,7 +2,8 @@
 set -eux -o pipefail
 
 DefaultLocale="en_US.utf8"
-DefaultMavenVersion="3.9.11"
+# TODO: track with updatecli
+DefaultMavenVersion="3.9.12"
 DefaultJDKVersion="jdk-21"
 DefaultUser="jenkins"
 
