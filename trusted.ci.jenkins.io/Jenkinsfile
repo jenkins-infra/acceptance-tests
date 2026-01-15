@@ -1,0 +1,145 @@
+parallel "linux": {
+  stage('Test default "linux" agent label with tools') {
+    node('linux') {
+      sh 'java -version'
+      sh 'mvn -v'
+      
+      jdk21 = tool name: "jdk21", type: 'jdk'
+      withEnv(["PATH+JDK=${jdk21}/bin", "JAVA_HOME=${jdk21}"]) {
+        sh 'mvn -v'
+      }
+
+      jdk17 = tool name: "jdk17", type: 'jdk'
+      withEnv(["PATH+JDK=${jdk17}/bin", "JAVA_HOME=${jdk17}"]) {
+        sh 'mvn -v'
+      }
+
+      jdk11 = tool name: "jdk11", type: 'jdk'
+      withEnv(["PATH+JDK=${jdk11}/bin", "JAVA_HOME=${jdk11}"]) {
+        sh 'mvn -v'
+      }
+    
+      jdk8 = tool name: "jdk8", type: 'jdk'
+      withEnv(["PATH+JDK=${jdk8}/bin", "JAVA_HOME=${jdk8}"]) {
+          sh 'mvn -v'
+      }
+    }
+  }
+},
+"ubuntu-22-amd64-maven-11": {
+  stage('Test specific "ubuntu-22-amd64-maven-11" agent label') {
+    node('ubuntu-22-amd64-maven-11') {
+      sh 'java -version'
+      sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
+    }
+  }
+},
+"ubuntu-22-amd64-maven-17": {
+  stage('Test specific "ubuntu-22-amd64-maven-17" agent label') {
+    node('ubuntu-22-amd64-maven-17') {
+      sh 'java -version'
+      sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
+    }
+  }
+},
+"ubuntu-22-amd64-maven-21": {
+  stage('Test specific "ubuntu-22-amd64-maven-21" agent label') {
+    node('ubuntu-22-amd64-maven-21') {
+      sh 'java -version'
+      sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
+    }
+  }
+},
+"ubuntu-22-arm64-maven-21": {
+  stage('Test specific "ubuntu-22-arm64-maven-21" agent label') {
+    node('ubuntu-22-arm64-maven-21') {
+      sh 'java -version'
+      sh 'mvn -v'
+      sh 'docker info'
+      sh 'cat /proc/cpuinfo'
+    }
+  }
+},
+"win-2019-amd64-maven-11": {
+  stage('Test specific "win-2019-amd64-maven-11" agent label') {
+    node('win-2019-amd64-maven-11') {
+      bat 'java -version'
+      bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
+    }
+  }
+},
+"win-2019-amd64-maven-17": {
+  stage('Test specific "win-2019-amd64-maven-17" agent label') {
+    node('win-2019-amd64-maven-17') {
+      bat 'java -version'
+      bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
+    }
+  }
+},
+"win-2019-amd64-maven-21": {
+  stage('Test specific "win-2019-amd64-maven-21" agent label') {
+    node('win-2019-amd64-maven-21') {
+      bat 'java -version'
+      bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
+    }
+  }
+},
+"win-2022-amd64-maven-11": {
+  stage('Test specific "win-2022-amd64-maven-11" agent label') {
+    node('win-2022-amd64-maven-11') {
+      bat 'java -version'
+      bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
+    }
+  }
+},
+"win-2022-amd64-maven-17": {
+  stage('Test specific "win-2022-amd64-maven-17" agent label') {
+    node('win-2022-amd64-maven-17') {
+      bat 'java -version'
+      bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
+    }
+  }
+},
+"win-2022-amd64-maven-21": {
+  stage('Test specific "win-2022-amd64-maven-21" agent label') {
+    node('win-2022-amd64-maven-21') {
+      bat 'java -version'
+      bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
+    }
+  }
+},
+"win-2025-amd64-maven-25": {
+  stage('Test specific "win-2025-amd64-maven-25" agent label') {
+    node('win-2025-amd64-maven-25') {
+      bat 'java -version'
+      bat 'mvn -v'
+      bat 'docker info'
+      pwsh 'Get-CimInstance Win32_Processor | Out-String'
+      pwsh 'Get-ComputerInfo | Out-String'
+    }
+  }
+}
