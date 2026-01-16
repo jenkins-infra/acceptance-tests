@@ -2,7 +2,8 @@
 set -eux -o pipefail
 
 DefaultLocale="en_US.utf8"
-# TODO: track with updatecli
+# A pull request can be used as validation for ci.jenkins.io when changing an agent template characteristics
+# See process following TDD principle mentioned at https://github.com/jenkins-infra/helpdesk/issues/4949#issuecomment-3755425511
 DefaultMavenVersion="3.9.12"
 DefaultJDKVersion="jdk-21"
 DefaultUser="jenkins"
