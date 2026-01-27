@@ -22,7 +22,6 @@ if ($args.Count -ge 1 -and $args[0]) {
 
 # System information
 Get-ComputerInfo | Out-String
-Get-CimInstance Win32_Processor | Out-String
 
 # Default locale check
 $currentCulture = [System.Globalization.CultureInfo]::CurrentCulture.Name
