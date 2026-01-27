@@ -26,13 +26,13 @@ def generateParallelSteps(labels) {
         def label = unboundLabel // Bind label before the closure
         parallelNodes[label] = {
             node(label) {
-                if (isUnix()) {
+                withEnv(["NODE_LABEL=${label}"]) {
                     checkout scm
-                    withEnv(["NODE_LABEL=${label}"]) {
+                    if (isUnix()) {
                         sh 'bash ./checks.sh "${NODE_LABEL}"'
+                    } else {
+                        pwsh 'pwsh ./checks.ps1 "${env:NODE_LABEL}"'
                     }
-                } else {
-                    pwsh script: './check.ps1 "${env:NODE_LABEL}"'
                 }
             }
         }
