@@ -23,6 +23,12 @@ if ($args.Count -ge 1 -and $args[0]) {
 
 # System information
 Get-ComputerInfo | Out-String
+try {
+    Get-CimInstance Win32_Processor | Out-String
+}
+catch {
+    Write-Host "INFO: not enought permissions for calling 'Get-CimInstance Win32_Processor'"
+}
 
 # Default locale check
 $currentCulture = [System.Globalization.CultureInfo]::CurrentCulture.Name
