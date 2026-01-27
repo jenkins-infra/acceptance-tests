@@ -5,6 +5,7 @@ Set-StrictMode -Version Latest
 $DefaultLocale = 'en-US'
 $DefaultMavenVersion = '3.9.12'
 $DefaultJDKVersion = 'jdk-21'
+$defaultWindowsVersion = '2025'
 $DefaultUser = 'jenkins'
 
 # Allow Mark Waite to run the same script on his home network
@@ -149,12 +150,23 @@ else {
 if ($label) {
     $labelVersion = $label -replace '\D'
     $agentVersion = (Get-ComputerInfo).WindowsProductName -replace '\D'
-    if ($labelVersion -eq $agentVersion) {
-        Write-Host "Windows $agentVersion version from Get-ComputerInfo matches Windows version from label $label"
+    if ($labelVersion.length -eq 4) {
+        if ($labelVersion -eq $agentVersion) {
+            Write-Host "Windows $agentVersion version from Get-ComputerInfo matches Windows version from label $label"
+        }
+        else {
+            Write-Host "ERROR: Windows $agentVersion version from Get-ComputerInfo does not match Windows version from label $label"
+            $failed += 256
+        }
     }
     else {
-        Write-Host "ERROR: Windows $agentVersion version from Get-ComputerInfo does not match Windows version from label $label"
-        $failed += 256
+        if ($labelVersion -eq $defaultWindowsVersion) {
+            Write-Host "Windows $agentVersion version from Get-ComputerInfo matches default Windows $defaultWindowsVersion version"
+        }
+        else {
+            Write-Host "ERROR: Windows $agentVersion version from Get-ComputerInfo does not match default Windows $defaultWindowsVersion version"
+            $failed += 256
+        }
     }
 }
 
