@@ -157,7 +157,7 @@ if ($label) {
     $labelVersion = $label -replace '\D'
     $agentVersion = (Get-ComputerInfo).WindowsProductName -replace '\D'
     if ($labelVersion.length -eq 4) {
-        if ($labelVersion -eq $agentVersion) {
+        if ($agentVersion -eq $labelVersion) {
             Write-Host "Windows $agentVersion version from Get-ComputerInfo matches Windows version from label $label"
         }
         else {
@@ -166,7 +166,7 @@ if ($label) {
         }
     }
     else {
-        if ($labelVersion -eq $defaultWindowsVersion) {
+        if ($agentVersion -eq $defaultWindowsVersion) {
             Write-Host "Windows $agentVersion version from Get-ComputerInfo matches default Windows $defaultWindowsVersion version"
         }
         else {
