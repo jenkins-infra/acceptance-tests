@@ -32,7 +32,7 @@ def generateParallelSteps(labels) {
                         sh 'bash ./checks.sh "${NODE_LABEL}"'
                     }
                 } else {
-                    bat 'set | findstr PROCESSOR'
+                    pwsh script: './check.ps1 "${env:NODE_LABEL}"'
                 }
             }
         }
