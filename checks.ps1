@@ -68,8 +68,10 @@ if (-not $env:JAVA_HOME) {
 }
 
 # Maven CLI check
+$mavenPresent = $false
 try {
     mvn -v | Out-Null
+    $mavenPresent = $true
 }
 catch {
     Write-Host "ERROR: command 'mvn -v' failed to execute. Debugging informations below:"
@@ -80,23 +82,23 @@ catch {
 }
 
 # Label-based JDK validation
-if ($label) {
+if ($label -and $mavenPresent) {
     $jdk = $DefaultJDKVersion
 
     switch -Wildcard ($label) {
-        { $_ -like '*maven-8' -or $_ -like '*jdk-8' -or $_ -like '*maven8' } {
+        { $_ -like '*maven-8*' -or $_ -like '*jdk-8*' -or $_ -like '*maven8*' } {
             $jdk = 'jdk-8'
         }
-        { $_ -like '*maven-11' -or $_ -like '*jdk-11' -or $_ -like '*maven11' } {
+        { $_ -like '*maven-11*' -or $_ -like '*jdk-11*' -or $_ -like '*maven11*' } {
             $jdk = 'jdk-11'
         }
-        { $_ -like '*maven-17' -or $_ -like '*jdk-17' -or $_ -like '*maven17' } {
+        { $_ -like '*maven-17*' -or $_ -like '*jdk-17*' -or $_ -like '*maven17*' } {
             $jdk = 'jdk-17'
         }
-        { $_ -like '*maven-21' -or $_ -like '*jdk-21' -or $_ -like '*maven21' } {
+        { $_ -like '*maven-21*' -or $_ -like '*jdk-21*' -or $_ -like '*maven21*' } {
             $jdk = 'jdk-21'
         }
-        { $_ -like '*maven-25' -or $_ -like '*jdk-25' -or $_ -like '*maven25' } {
+        { $_ -like '*maven-25*' -or $_ -like '*jdk-25*' -or $_ -like '*maven25*' } {
             $jdk = 'jdk-25'
         }
         default {
@@ -134,7 +136,7 @@ if ($label) {
 }
 
 # Maven version check
-$mvnOutput = mvn -v 2>&1
+$mvnOutput = (mvn -v 2>&1) | Out-String
 if ($mvnOutput -notmatch [regex]::Escape($DefaultMavenVersion)) {
     Write-Host "ERROR Maven version not matching what is expected : expecting $DefaultMavenVersion for label '$($args[0])' found $mvnOutput"
     $failed += 128
@@ -146,7 +148,7 @@ else {
 # Windows version check
 if ($label) {
     $labelVersion = $label -replace '\D'
-    $agentVersion = Get-ComputerInfo | Select-Object WindowsProductName -replace '\D'
+    $agentVersion = (Get-ComputerInfo).WindowsProductName -replace '\D'
     if ($labelVersion -eq $agentVersion) {
         Write-Host "Windows $agentVersion version from Get-ComputerInfo matches Windows version from label $label"
     }
