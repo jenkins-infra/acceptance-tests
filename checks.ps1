@@ -27,8 +27,9 @@ Write-Host "INFO: expected default values below"
 $expectedDefaults | Out-String
 
 # System information
+$computerInfo = (Get-ComputerInfo)
 Write-Host "INFO: system information below"
-Get-ComputerInfo | Out-String
+$computerInfo | Out-String
 try {
     Get-CimInstance Win32_Processor | Out-String
 }
@@ -169,7 +170,7 @@ else {
 # Windows version check
 if ($Label) {
     $LabelVersion = $Label -replace '\D'
-    $agentVersion = (Get-ComputerInfo).WindowsProductName -replace '\D'
+    $agentVersion = $computerInfo.WindowsProductName -replace '\D'
     if ($LabelVersion.length -eq 4) {
         if ($agentVersion -eq $LabelVersion) {
             Write-Host ('INFO: Windows {0} version from Get-ComputerInfo matches Windows version from "{1}" label' -f $agentVersion, $Label)
