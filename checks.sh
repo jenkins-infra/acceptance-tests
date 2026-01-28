@@ -138,7 +138,16 @@ else
 fi
 
 # Docker check
-if [[ "${label}" == *docker* ]]; then
+docker_expected=false
+case "${label}" in
+	*docker*)
+		docker_expected=true;;
+	windows-*)
+		docker_expected=true;; # docker controller and agents
+	*)
+		echo "INFO: docker is not expected from '$1' label"
+esac
+if [[ "${docker_expected}" == "true" ]]; then
 	docker info 2>/dev/null >/dev/null && echo "INFO: docker is present as expected from \"${label}\" label" || {
 		echo "ERROR: docker is not present as expected from \"${label}\" label, debugging informations below"
 		set +e

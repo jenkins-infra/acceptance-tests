@@ -197,10 +197,21 @@ if ($Label) {
 }
 
 # Docker check
-if ($Label -match 'docker') {
+$dockerExpected = $false
+switch -Wildcard ($Label) {
+    { $_ -like '*docker*' } {
+        $dockerExpected = $false
+    }
+    { $_ -like 'windows*' } {
+        $dockerExpected = $false
+    }
+    default {
+        Write-Host ('INFO: docker is not expected from "{0}" label' -f $Label)
+    }
+}
+if ($dockerExpected) {
     try {
         $dockerInfo = (docker info) | Out-String
-        $dockerPresent = $true
         Write-Host ('INFO: docker is present as expected from "{0}" label, info below' -f $Label)
         Write-Host $dockerInfo
     }
