@@ -104,7 +104,7 @@ catch {
 }
 
 # Label-based JDK validation
-if ($Label -and $mavenPresent) {
+if ($Label -and -not $Label.StartsWith('windows') -and $mavenPresent) {
     $jdk = $expectedDefaults.jdkVersion
 
     switch -Wildcard ($Label) {
