@@ -138,15 +138,8 @@ else
 fi
 
 # Docker check
-docker_present=true
-docker info 2>/dev/null >/dev/null || {
-	echo "INFO: command 'docker info' failed to execute, might not be available on this agent."
-	docker_present=false
-}
 if [[ "${label}" == *docker* ]]; then
-	if [ $docker_present == "false" ]; then
-    	echo "INFO: docker is present as expected from \"${label}\" label"
-	else
+	docker info 2>/dev/null >/dev/null && echo "INFO: docker is present as expected from \"${label}\" label" || {
 		echo "ERROR: docker is not present as expected from \"${label}\" label, debugging informations below"
 		set +e
 		echo "${PATH}";
@@ -154,7 +147,7 @@ if [[ "${label}" == *docker* ]]; then
 		docker info;
 		set -e
 		failed=$((failed + 256))
-	fi
+	}
 fi
 
 exit ${failed}
