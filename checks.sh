@@ -71,11 +71,15 @@ mvn -v 2>/dev/null >/dev/null || {
 	exit 1;
 }
 
+label=''
+if [ $# -ge 1 ] && [ -n "$1" ]; then
+	label="$1"
+fi
 # This check relies on the java version output of the 'mvn -v' command
 # Java 8 needs to include '1.8' in the output
 # Java 11 needs to include '11.' in the output
 # Java 17 needs to include '17.' in the output
-if [ $# -ge 1 ] && [ -n "$1" ]; then
+if [ -n "${label}" ]; then
 	echo "label of the node: $1"
 
 	jdk="${DefaultJDKVersion}"
@@ -131,6 +135,24 @@ if [[ "$(mvn -v 2>&1)" != *"${DefaultMavenVersion}"* ]]; then
 	failed=$((failed + 128))
 else
 	echo "Maven version ${DefaultMavenVersion} OK for label '$1'"
+fi
+
+# Docker check
+docker_present=false
+docker info 2>/dev/null >/dev/null || {
+	set +e
+	echo "ERROR: command 'docker info' failed to execute. Debugging informations below:";
+	echo "${PATH}";
+	which docker;
+	docker info;
+	set -e
+	exit 1;
+}
+if [[ "${label}" == *docker* ]]; then
+    echo "INFO: docker is present as expected from \"${label}\" label"
+else
+    echo "ERROR: docker is not present as expected from \"${label}\" label"
+    failed=$((failed + 256))
 fi
 
 exit ${failed}

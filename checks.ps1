@@ -196,4 +196,29 @@ if ($Label) {
     }
 }
 
+# Docker check
+$dockerPresent = $false
+$mvnOutput = ''
+try {
+    $dockerInfo = (docker info) | Out-String
+    $dockerPresent = $true
+    Write-Host 'INFO: docker info below'
+    Write-Host $dockerInfo
+}
+catch {
+    Write-Host 'ERROR: "docker info" command failed to execute. Debugging informations below:'
+    Write-Host $env:PATH
+    Get-Command docker -ErrorAction SilentlyContinue
+    $dockerInfo = (docker info) | Out-String
+    Write-Host $dockerInfo
+    $failed += 512
+}
+if ($dockerPresent -and $Label -match 'docker') {
+    Write-Host ('INFO: docker is present as expected from "{0}" label' -f $Label)
+}
+else {
+    Write-Host ('ERROR: docker is not present as expected from "{0}" label' -f $Label)
+    $failed += 1024
+}
+
 exit $failed
