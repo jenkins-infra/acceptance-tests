@@ -109,7 +109,7 @@ if ($label -and $mavenPresent) {
             $jdk = 'jdk-25'
         }
         default {
-            Write-Host "Label '$label' specified. Using default jdk."
+            Write-Host "INFO: Label '$label' specified. Using default jdk."
         }
     }
 
@@ -120,7 +120,7 @@ if ($label -and $mavenPresent) {
         'jdk-21' { $jdknumber = '21' }
         'jdk-25' { $jdknumber = '25' }
         default {
-            Write-Host "ERROR: JDK not matching the expected $jdk for label '$label'"
+            Write-Host "ERROR: JDK does not match the expected $jdk for '$label' label"
             mvn -v
             $failed += 64
             $jdknumber = $null
@@ -133,11 +133,11 @@ if ($label -and $mavenPresent) {
         $jdkFromMaven = $javaLine.ToString().Split(' ')[2]
 
         if ($jdkFromMaven -notmatch [regex]::Escape($jdknumber)) {
-            Write-Host "ERROR: JDK from maven $jdkFromMaven not matching the expected $jdknumber for label '$label'"
+            Write-Host "ERROR: JDK from maven $jdkFromMaven not matching the expected $jdknumber for '$label' label"
             $failed += 64
         }
         else {
-            Write-Host "JDK Version ok $jdkFromMaven for $label"
+            Write-Host "INFO: JDK version $jdkFromMaven from Maven matches '$label' label"
         }
     }
 }
@@ -145,11 +145,11 @@ if ($label -and $mavenPresent) {
 # Maven version check
 $mvnOutput = (mvn -v 2>&1) | Out-String
 if ($mvnOutput -notmatch [regex]::Escape($DefaultMavenVersion)) {
-    Write-Host "ERROR Maven version not matching what is expected : expecting $DefaultMavenVersion for label '$($args[0])' found $mvnOutput"
+    Write-Host "ERROR Maven version not matching what is expected : expecting $DefaultMavenVersion for '$label' label found $mvnOutput"
     $failed += 128
 }
 else {
-    Write-Host "Maven version $DefaultMavenVersion OK for label '$($args[0])'"
+    Write-Host "INFO: Maven version $DefaultMavenVersion matches '$label' label"
 }
 
 # Windows version check
@@ -158,10 +158,10 @@ if ($label) {
     $agentVersion = (Get-ComputerInfo).WindowsProductName -replace '\D'
     if ($labelVersion.length -eq 4) {
         if ($agentVersion -eq $labelVersion) {
-            Write-Host "Windows $agentVersion version from Get-ComputerInfo matches Windows version from label $label"
+            Write-Host "Windows $agentVersion version from Get-ComputerInfo matches Windows version from '$label' label"
         }
         else {
-            Write-Host "ERROR: Windows $agentVersion version from Get-ComputerInfo does not match Windows version from label $label"
+            Write-Host "ERROR: Windows $agentVersion version from Get-ComputerInfo does not match Windows version from '$label' label"
             $failed += 256
         }
     }
