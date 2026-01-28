@@ -17,7 +17,7 @@ sequentialStages['Maven and JDK'] = [ 'maven-8', 'maven-11', 'maven-17', 'maven-
 sequentialStages['VM Types'] = [ 'ubuntu-22-amd64-maven8', 'ubuntu-22-amd64-maven11', 'ubuntu-22-amd64-maven17', 'ubuntu-22-amd64-maven21', 'ubuntu-22-arm64-maven17', 'ubuntu-22-arm64-maven21', 'ubuntu-22-amd64-highmem-maven17']
 sequentialStages['Linux Processors'] = [ 's390x', 'linux-amd64', 'linux-arm64']
 sequentialStages['Docker Platforms'] = [ 's390xdocker', 'docker', 'docker-windows', 'arm64docker']
-sequentialStages['Spot and OnDemand'] = [ 'windows && spot', 'windows && nonspot', 'docker && spot', 'docker && nonspot', 'docker-highmem-nonspot'] // Pipeline Library (mostly), but also Docker-*agent and Jenkins ATH
+sequentialStages['Spot and OnDemand'] = [ 'docker-windows && spot', 'docker-windows && nonspot', 'docker && spot', 'docker && nonspot', 'docker-highmem-nonspot'] // Pipeline Library (mostly), but also Docker-*agent and Jenkins ATH
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
@@ -26,13 +26,13 @@ def generateParallelSteps(labels) {
         def label = unboundLabel // Bind label before the closure
         parallelNodes[label] = {
             node(label) {
-                if (isUnix()) {
+                withEnv(["NODE_LABEL=${label}"]) {
                     checkout scm
-                    withEnv(["NODE_LABEL=${label}"]) {
+                    if (isUnix()) {
                         sh 'bash ./checks.sh "${NODE_LABEL}"'
+                    } else {
+                        pwsh 'pwsh ./checks.ps1 -Label "${env:NODE_LABEL}"'
                     }
-                } else {
-                    bat 'set | findstr PROCESSOR'
                 }
             }
         }
