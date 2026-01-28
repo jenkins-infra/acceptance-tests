@@ -40,7 +40,7 @@ def generateParallelSteps(labels) {
     return parallelNodes
 }
 
-timeout(unit: 'MINUTES', time: 45) {
+timeout(unit: 'MINUTES', time:29) {
     for (unboundStage in sequentialStages) {
         def boundStage = unboundStage // Bind label before the closure
         stage(boundStage.key) {
