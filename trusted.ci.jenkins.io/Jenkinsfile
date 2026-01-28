@@ -1,145 +1,50 @@
-parallel "linux": {
-  stage('Test default "linux" agent label with tools') {
-    node('linux') {
-      sh 'java -version'
-      sh 'mvn -v'
-      
-      jdk21 = tool name: "jdk21", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk21}/bin", "JAVA_HOME=${jdk21}"]) {
-        sh 'mvn -v'
-      }
+//!/usr/bin/env groovy
 
-      jdk17 = tool name: "jdk17", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk17}/bin", "JAVA_HOME=${jdk17}"]) {
-        sh 'mvn -v'
-      }
+// Only one build running at a time, stop prior build if new build starts
+def buildNumber = BUILD_NUMBER as int; if (buildNumber > 1) milestone(buildNumber - 1); milestone(buildNumber) // Thanks to jglick
 
-      jdk11 = tool name: "jdk11", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk11}/bin", "JAVA_HOME=${jdk11}"]) {
-        sh 'mvn -v'
-      }
-    
-      jdk8 = tool name: "jdk8", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk8}/bin", "JAVA_HOME=${jdk8}"]) {
-          sh 'mvn -v'
-      }
+properties([
+    buildDiscarder(logRotator(numToKeepStr: '15')),
+    disableResume(),
+    durabilityHint('PERFORMANCE_OPTIMIZED'),
+    pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
+])
+
+// Define the sequential stages and the parallel steps inside each stage
+def sequentialStages = [:]
+// Labels requested in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPlugin.groovy and https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPluginWithGradle.groovy
+sequentialStages['Maven and JDK'] = [ 'maven-8', 'maven-11', 'maven-17', 'maven-21', 'maven-25', 'maven-8-windows', 'maven-11-windows', 'maven-17-windows', 'maven-21-windows', 'maven-25-windows']
+sequentialStages['VM Types'] = [ 'ubuntu-22-amd64-maven8', 'ubuntu-22-amd64-maven11', 'ubuntu-22-amd64-maven17', 'ubuntu-22-amd64-maven21', 'ubuntu-22-arm64-maven17', 'ubuntu-22-arm64-maven21', 'ubuntu-22-amd64-highmem-maven17']
+sequentialStages['Linux Processors'] = [ 's390x', 'linux-amd64', 'linux-arm64']
+sequentialStages['Docker Platforms'] = [ 's390xdocker', 'docker', 'docker-windows', 'arm64docker']
+sequentialStages['Spot and OnDemand'] = [ 'docker-windows && spot', 'docker-windows && nonspot', 'docker && spot', 'docker && nonspot', 'docker-highmem-nonspot'] // Pipeline Library (mostly), but also Docker-*agent and Jenkins ATH
+
+// Generate a parallel step for each label in labels
+def generateParallelSteps(labels) {
+    def parallelNodes = [:]
+    for (unboundLabel in labels) {
+        def label = unboundLabel // Bind label before the closure
+        parallelNodes[label] = {
+            node(label) {
+                withEnv(["NODE_LABEL=${label}"]) {
+                    checkout scm
+                    if (isUnix()) {
+                        sh 'bash ./checks.sh "${NODE_LABEL}"'
+                    } else {
+                        pwsh 'pwsh ./checks.ps1 -Label "${env:NODE_LABEL}"'
+                    }
+                }
+            }
+        }
     }
-  }
-},
-"ubuntu-22-amd64-maven-11": {
-  stage('Test specific "ubuntu-22-amd64-maven-11" agent label') {
-    node('ubuntu-22-amd64-maven-11') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
+    return parallelNodes
+}
+
+timeout(unit: 'MINUTES', time:29) {
+    for (unboundStage in sequentialStages) {
+        def boundStage = unboundStage // Bind label before the closure
+        stage(boundStage.key) {
+            parallel generateParallelSteps(sequentialStages[boundStage.key])
+        }
     }
-  }
-},
-"ubuntu-22-amd64-maven-17": {
-  stage('Test specific "ubuntu-22-amd64-maven-17" agent label') {
-    node('ubuntu-22-amd64-maven-17') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"ubuntu-22-amd64-maven-21": {
-  stage('Test specific "ubuntu-22-amd64-maven-21" agent label') {
-    node('ubuntu-22-amd64-maven-21') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"ubuntu-22-arm64-maven-21": {
-  stage('Test specific "ubuntu-22-arm64-maven-21" agent label') {
-    node('ubuntu-22-arm64-maven-21') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"win-2019-amd64-maven-11": {
-  stage('Test specific "win-2019-amd64-maven-11" agent label') {
-    node('win-2019-amd64-maven-11') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2019-amd64-maven-17": {
-  stage('Test specific "win-2019-amd64-maven-17" agent label') {
-    node('win-2019-amd64-maven-17') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2019-amd64-maven-21": {
-  stage('Test specific "win-2019-amd64-maven-21" agent label') {
-    node('win-2019-amd64-maven-21') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2022-amd64-maven-11": {
-  stage('Test specific "win-2022-amd64-maven-11" agent label') {
-    node('win-2022-amd64-maven-11') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2022-amd64-maven-17": {
-  stage('Test specific "win-2022-amd64-maven-17" agent label') {
-    node('win-2022-amd64-maven-17') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2022-amd64-maven-21": {
-  stage('Test specific "win-2022-amd64-maven-21" agent label') {
-    node('win-2022-amd64-maven-21') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2025-amd64-maven-25": {
-  stage('Test specific "win-2025-amd64-maven-25" agent label') {
-    node('win-2025-amd64-maven-25') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
 }
