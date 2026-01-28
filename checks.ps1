@@ -1,27 +1,33 @@
 #!/usr/bin/env pwsh
+[CmdletBinding()]
+Param(
+    [Parameter(Position = 1)]
+    [String] $Label
+)
+
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$DefaultLocale = 'en-US'
-$DefaultMavenVersion = '3.9.12'
-$DefaultJDKVersion = 'jdk-21'
-$defaultWindowsVersion = '2025'
-$DefaultUser = 'jenkins'
+$failed = 0
+$expectedDefaults = @{
+    locale         = 'en-US'
+    mavenVersion   = '3.9.12'
+    jdkVersion     = 21
+    windowsVersion = 2025
+    user           = 'jenkins'
+}
 
 # Allow Mark Waite to run the same script on his home network
 if ($env:JENKINS_ADVERTISED_HOSTNAME) {
-    $DefaultUser = 'jagent'
+    $expectedDefaults.user = 'jagent'
 }
 
-$failed = 0
-$label = ''
-
-if ($args.Count -ge 1 -and $args[0]) {
-    $label = $args[0]
-    Write-Host "label of the node: $label"
-}
+Write-Host "INFO: Label passed in parameter: $Label"
+Write-Host "INFO: expected default values below"
+$expectedDefaults | Out-String
 
 # System information
+Write-Host "INFO: system information below"
 Get-ComputerInfo | Out-String
 try {
     Get-CimInstance Win32_Processor | Out-String
@@ -32,145 +38,153 @@ catch {
 
 # Default locale check
 $currentCulture = [System.Globalization.CultureInfo]::CurrentCulture.Name
-if ($currentCulture -eq $DefaultLocale) {
-    Write-Host "$DefaultLocale locale is available"
+if ($currentCulture -eq $expectedDefaults.locale) {
+    Write-Host ('INFO: {0} locale is the expected one' -f $currentCulture)
 }
 else {
-    Write-Host "ERROR: $DefaultLocale locale is not available (current: $currentCulture)"
+    Write-Host ('ERROR: {0} locale is not the expected one' -f $currentCulture, $expectedDefaults.locale)
     $failed += 1
 }
 
 # User existence check
 try {
-    Get-LocalUser -Name $DefaultUser -ErrorAction Stop | Out-Null
-    Write-Host "'$DefaultUser' user exists"
+    Get-LocalUser -Name $expectedDefaults.user -ErrorAction Stop | Out-Null
+    Write-Host ('INFO: "{0}" user exists' -f $expectedDefaults.user)
 }
 catch {
-    Write-Host "ERROR: '$DefaultUser' user does not exist"
+    Write-Host ('ERROR: "{0}" does not exist' -f $expectedDefaults.user)
     $failed += 2
 }
 
 # Running user check
 $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-if ($currentUser -notmatch "\\$DefaultUser$") {
-    Write-Host "ERROR: Not running as '$DefaultUser' user"
-    Write-Host "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name: $currentUser"
+if ($currentUser -match $expectedDefaults.user) {
+    Write-Host ('INFO: Running as "{0}" user' -f $expectedDefaults.user)
+}
+else {
+    Write-Host ('ERROR: Not running as "{0}" user' -f $expectedDefaults.user)
+    Write-Host ('[System.Security.Principal.WindowsIdentity]::GetCurrent().Name: {0}' -f $currentUser)
     $failed += 4
 }
 
 # Administrator privilege check (should NOT be admin)
-$principal = New-Object Security.Principal.WindowsPrincipal(
-    [Security.Principal.WindowsIdentity]::GetCurrent()
-)
-
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host "ERROR: running as Administrator should not be possible"
+    Write-Host 'ERROR: Running as Administrator is not expected'
     $failed += 8
+}
+else {
+    Write-Host 'INFO: Not running as Administrator as expected'
 }
 
 # JAVA_HOME check
 if (-not $env:JAVA_HOME) {
-    Write-Host "ERROR: the 'JAVA_HOME' environment variable is undefined"
+    Write-Host 'ERROR: JAVA_HOME environment variable is undefined'
     $failed += 16
+}
+else {
+    Write-Host ('INFO: JAVA_HOME environment variable is defined: {0}' -f $env:JAVA_HOME)
 }
 
 # Maven CLI check
 $mavenPresent = $false
+$mvnOutput = ''
 try {
-    mvn -v | Out-Null
+    $mvnOutput = (mvn -v 2>&1) | Out-String
     $mavenPresent = $true
 }
 catch {
-    Write-Host "ERROR: command 'mvn -v' failed to execute. Debugging informations below:"
+    Write-Host 'ERROR: "mvn -v" command failed to execute. Debugging informations below:'
     Write-Host $env:PATH
     Get-Command mvn -ErrorAction SilentlyContinue
-    mvn -v
+    $mvnOutput = (mvn -v) | Out-String
+    Write-Host $mvnOutput
     $failed += 32
 }
 
 # Label-based JDK validation
-if ($label -and $mavenPresent) {
-    $jdk = $DefaultJDKVersion
+if ($Label -and $mavenPresent) {
+    $jdk = $expectedDefaults.jdkVersion
 
-    switch -Wildcard ($label) {
+    switch -Wildcard ($Label) {
         { $_ -like '*maven-8*' -or $_ -like '*jdk-8*' -or $_ -like '*maven8*' } {
-            $jdk = 'jdk-8'
+            $jdk = 8
         }
         { $_ -like '*maven-11*' -or $_ -like '*jdk-11*' -or $_ -like '*maven11*' } {
-            $jdk = 'jdk-11'
+            $jdk = 11
         }
         { $_ -like '*maven-17*' -or $_ -like '*jdk-17*' -or $_ -like '*maven17*' } {
-            $jdk = 'jdk-17'
+            $jdk = 17
         }
         { $_ -like '*maven-21*' -or $_ -like '*jdk-21*' -or $_ -like '*maven21*' } {
-            $jdk = 'jdk-21'
+            $jdk = 21
         }
         { $_ -like '*maven-25*' -or $_ -like '*jdk-25*' -or $_ -like '*maven25*' } {
-            $jdk = 'jdk-25'
+            $jdk = 25
         }
         default {
-            Write-Host "INFO: Label '$label' specified. Using default jdk."
+            Write-Host ('INFO: "{0}" label does not contain any JDK version. Using default jdk {1}' -f $Label, $jdk)
         }
     }
 
     switch ($jdk) {
-        'jdk-8' { $jdknumber = '1.8' }
-        'jdk-11' { $jdknumber = '11.' }
-        'jdk-17' { $jdknumber = '17.' }
-        'jdk-21' { $jdknumber = '21' }
-        'jdk-25' { $jdknumber = '25' }
+        8  { $jdkVersion = '1.8' }
+        11 { $jdkVersion = '11' }
+        17 { $jdkVersion = '17' }
+        21 { $jdkVersion = '21' }
+        25 { $jdkVersion = '25' }
         default {
-            Write-Host "ERROR: JDK does not match the expected $jdk for '$label' label"
+            Write-Host ('ERROR: JDK{0} does not match the "{1}" label' -f $jdk, $Label)
             mvn -v
             $failed += 64
-            $jdknumber = $null
+            $jdkVersion = $null
         }
     }
 
-    if ($jdknumber) {
-        $mvnOutput = mvn -v 2>&1
-        $javaLine = $mvnOutput | Select-String 'Java version'
+    if ($jdkVersion) {
+        $javaLine = (mvn -v 2>&1) | Select-String 'Java version'
         $jdkFromMaven = $javaLine.ToString().Split(' ')[2]
 
-        if ($jdkFromMaven -notmatch [regex]::Escape($jdknumber)) {
-            Write-Host "ERROR: JDK from maven $jdkFromMaven not matching the expected $jdknumber for '$label' label"
-            $failed += 64
+        if ($jdkFromMaven -match [regex]::Escape($jdkVersion)) {
+            Write-Host ('INFO: JDK{0} from Maven matches the expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
         }
         else {
-            Write-Host "INFO: JDK version $jdkFromMaven from Maven matches '$label' label"
+            Write-Host ('ERROR: JDK{0} from Maven does not match the expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+            $failed += 64
         }
     }
 }
 
 # Maven version check
-$mvnOutput = (mvn -v 2>&1) | Out-String
-if ($mvnOutput -notmatch [regex]::Escape($DefaultMavenVersion)) {
-    Write-Host "ERROR Maven version not matching what is expected : expecting $DefaultMavenVersion for '$label' label found $mvnOutput"
-    $failed += 128
+if ($mavenPresent -and $mvnOutput -match [regex]::Escape($expectedDefaults.mavenVersion)) {
+    Write-Host ('INFO: Maven output match the expected {0} version from "{1}" label:' -f $expectedDefaults.mavenVersion, $Label)
+    Write-Host $mvnOutput
 }
 else {
-    Write-Host "INFO: Maven version $DefaultMavenVersion matches '$label' label"
+    Write-Host ('ERROR: Maven output does not match the expected {0} version from "{1}" label:' -f $expectedDefaults.mavenVersion, $Label)
+    Write-Host $mvnOutput
+    $failed += 128
 }
 
 # Windows version check
-if ($label) {
-    $labelVersion = $label -replace '\D'
+if ($Label) {
+    $LabelVersion = $Label -replace '\D'
     $agentVersion = (Get-ComputerInfo).WindowsProductName -replace '\D'
-    if ($labelVersion.length -eq 4) {
-        if ($agentVersion -eq $labelVersion) {
-            Write-Host "Windows $agentVersion version from Get-ComputerInfo matches Windows version from '$label' label"
+    if ($LabelVersion.length -eq 4) {
+        if ($agentVersion -eq $LabelVersion) {
+            Write-Host ('INFO: Windows {0} version from Get-ComputerInfo matches Windows version from "{1}" label' -f $agentVersion, $Label)
         }
         else {
-            Write-Host "ERROR: Windows $agentVersion version from Get-ComputerInfo does not match Windows version from '$label' label"
+            Write-Host ('ERROR: Windows {0} version from Get-ComputerInfo does not match Windows version from "{1}" label' -f $agentVersion, $Label)
             $failed += 256
         }
     }
     else {
-        if ($agentVersion -eq $defaultWindowsVersion) {
-            Write-Host "Windows $agentVersion version from Get-ComputerInfo matches default Windows $defaultWindowsVersion version"
+        if ($agentVersion -eq $expectedDefaults.windowsVersion) {
+            Write-Host ('INFO: Windows {0} version from Get-ComputerInfo matches default Windows {1} version' -f $agentVersion, $expectedDefaults.windowsVersion)
         }
         else {
-            Write-Host "ERROR: Windows $agentVersion version from Get-ComputerInfo does not match default Windows $defaultWindowsVersion version"
+            Write-Host ('ERROR: Windows {0} version from Get-ComputerInfo does not match default Windows {1} version' -f $agentVersion, $expectedDefaults.windowsVersion)
             $failed += 256
         }
     }
