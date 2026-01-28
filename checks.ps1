@@ -206,12 +206,11 @@ try {
     Write-Host $dockerInfo
 }
 catch {
-    Write-Host 'ERROR: "docker info" command failed to execute. Debugging informations below:'
+    Write-Host 'INFO: "docker info" command failed to execute, might not be present on this agent. Debugging informations below:'
     Write-Host $env:PATH
     Get-Command docker -ErrorAction SilentlyContinue
     $dockerInfo = (docker info) | Out-String
     Write-Host $dockerInfo
-    $failed += 512
 }
 if ($dockerPresent -and $Label -match 'docker') {
     Write-Host ('INFO: docker is present as expected from "{0}" label' -f $Label)

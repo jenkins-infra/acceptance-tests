@@ -141,12 +141,11 @@ fi
 docker_present=false
 docker info 2>/dev/null >/dev/null || {
 	set +e
-	echo "ERROR: command 'docker info' failed to execute. Debugging informations below:";
+	echo "INFO: command 'docker info' failed to execute, might not be available on this agent. Debugging informations below:";
 	echo "${PATH}";
 	which docker;
 	docker info;
 	set -e
-	exit 1;
 }
 if [[ "${label}" == *docker* ]]; then
     echo "INFO: docker is present as expected from \"${label}\" label"
