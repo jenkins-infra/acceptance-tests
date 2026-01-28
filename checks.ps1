@@ -212,12 +212,14 @@ catch {
     $dockerInfo = (docker info) | Out-String
     Write-Host $dockerInfo
 }
-if ($dockerPresent -and $Label -match 'docker') {
-    Write-Host ('INFO: docker is present as expected from "{0}" label' -f $Label)
-}
-else {
-    Write-Host ('ERROR: docker is not present as expected from "{0}" label' -f $Label)
-    $failed += 1024
+if ($dockerPresent) {
+    if ($Label -match 'docker') {
+        Write-Host ('INFO: docker is present as expected from "{0}" label' -f $Label)
+    }
+    else {
+        Write-Host ('ERROR: docker is not present as expected from "{0}" label' -f $Label)
+        $failed += 1024
+    }
 }
 
 exit $failed
