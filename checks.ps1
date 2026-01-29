@@ -1,4 +1,6 @@
 #!/usr/bin/env pwsh
+# Note: this script is not compatible with PowerShell 5
+
 [CmdletBinding()]
 Param(
     [Parameter(Position = 0)]
