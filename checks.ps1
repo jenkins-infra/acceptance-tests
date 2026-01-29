@@ -200,10 +200,10 @@ if ($Label) {
 $dockerExpected = $false
 switch -Wildcard ($Label) {
     { $_ -like '*docker*' } {
-        $dockerExpected = $false
+        $dockerExpected = $true
     }
     { $_ -like 'windows*' } {
-        $dockerExpected = $false
+        $dockerExpected = $true
     }
     default {
         Write-Host ('INFO: docker is not expected from "{0}" label' -f $Label)
