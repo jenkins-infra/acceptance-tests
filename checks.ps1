@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 [CmdletBinding()]
 Param(
-    [Parameter(Position = 1)]
+    [Parameter(Position = 0)]
     [String] $Label
 )
 
