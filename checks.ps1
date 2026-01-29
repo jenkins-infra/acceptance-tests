@@ -24,12 +24,12 @@ if ($env:JENKINS_ADVERTISED_HOSTNAME) {
 
 Write-Host "INFO: Label passed in parameter: $Label"
 Write-Host "INFO: expected default values below"
-$expectedDefaults | Out-String
+Write-Host ($expectedDefaults | Out-String)
 
 # System information
 $computerInfo = (Get-ComputerInfo)
 Write-Host "INFO: system information below"
-$computerInfo | Out-String
+Write-Host ($computerInfo | Out-String)
 try {
     Get-CimInstance Win32_Processor | Out-String
 }
