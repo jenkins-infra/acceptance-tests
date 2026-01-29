@@ -40,10 +40,10 @@ catch {
 # Default locale check
 $currentCulture = [System.Globalization.CultureInfo]::CurrentCulture.Name
 if ($currentCulture -eq $expectedDefaults.locale) {
-    Write-Host ('INFO: {0} locale is the expected one' -f $currentCulture)
+    Write-Host ('INFO: "{0}" is the expected locale' -f $currentCulture)
 }
 else {
-    Write-Host ('ERROR: {0} locale is not the expected one' -f $currentCulture, $expectedDefaults.locale)
+    Write-Host ('ERROR: "{0}" is not the expected "{1}" locale' -f $currentCulture, $expectedDefaults.locale)
     $failed += 1
 }
 
