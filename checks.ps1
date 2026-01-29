@@ -1,7 +1,9 @@
 #!/usr/bin/env pwsh
+# Note: this script is not compatible with PowerShell 5
+
 [CmdletBinding()]
 Param(
-    [Parameter(Position = 1)]
+    [Parameter(Position = 0)]
     [String] $Label
 )
 
@@ -24,12 +26,12 @@ if ($env:JENKINS_ADVERTISED_HOSTNAME) {
 
 Write-Host "INFO: Label passed in parameter: $Label"
 Write-Host "INFO: expected default values below"
-$expectedDefaults | Out-String
+Write-Host ($expectedDefaults | Out-String)
 
 # System information
 $computerInfo = (Get-ComputerInfo)
 Write-Host "INFO: system information below"
-$computerInfo | Out-String
+Write-Host ($computerInfo | Out-String)
 try {
     Get-CimInstance Win32_Processor | Out-String
 }
@@ -40,10 +42,10 @@ catch {
 # Default locale check
 $currentCulture = [System.Globalization.CultureInfo]::CurrentCulture.Name
 if ($currentCulture -eq $expectedDefaults.locale) {
-    Write-Host ('INFO: {0} locale is the expected one' -f $currentCulture)
+    Write-Host ('INFO: "{0}" is the expected locale' -f $currentCulture)
 }
 else {
-    Write-Host ('ERROR: {0} locale is not the expected one' -f $currentCulture, $expectedDefaults.locale)
+    Write-Host ('ERROR: "{0}" is not the expected "{1}" locale' -f $currentCulture, $expectedDefaults.locale)
     $failed += 1
 }
 
@@ -104,7 +106,7 @@ catch {
 }
 
 # Label-based JDK validation
-if ($Label -and $mavenPresent) {
+if ($Label -and -not $Label.StartsWith('windows') -and $mavenPresent) {
     $jdk = $expectedDefaults.jdkVersion
 
     switch -Wildcard ($Label) {
@@ -143,14 +145,17 @@ if ($Label -and $mavenPresent) {
     }
 
     if ($jdkVersion) {
-        $javaLine = (mvn -v 2>&1) | Select-String 'Java version'
-        $jdkFromMaven = $javaLine.ToString().Split(' ')[2]
+        $jdkFromMaven = ''
+        $javaLine = (mvn -v 2>&1 | Select-String 'Java version').Line -replace ',', ''
+        if ($javaLine -match 'Java version:\s*([^\s,]+)') {
+            $jdkFromMaven = $Matches[1]
+        }
 
-        if ($jdkFromMaven -match [regex]::Escape($jdkVersion)) {
-            Write-Host ('INFO: JDK{0} from Maven matches the expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+        if ($jdkFromMaven -and $jdkFromMaven -match [regex]::Escape($jdkVersion)) {
+            Write-Host ('INFO: Java version {0} from Maven matches expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
         }
         else {
-            Write-Host ('ERROR: JDK{0} from Maven does not match the expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+            Write-Host ('ERROR: Java version {0} from Maven does not match expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
             $failed += 64
         }
     }
