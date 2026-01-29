@@ -143,14 +143,17 @@ if ($Label -and -not $Label.StartsWith('windows') -and $mavenPresent) {
     }
 
     if ($jdkVersion) {
-        $javaLine = (mvn -v 2>&1) | Select-String 'Java version'
-        $jdkFromMaven = $javaLine.ToString().Split(' ')[2]
+        $jdkFromMaven = ''
+        $javaLine = (mvn -v 2>&1 | Select-String 'Java version').Line -replace ',', ''
+        if ($javaLine -match 'Java version:\s*([^\s,]+)') {
+            $jdkFromMaven = $Matches[1]
+        }
 
-        if ($jdkFromMaven -match [regex]::Escape($jdkVersion)) {
-            Write-Host ('INFO: JDK{0} from Maven matches the expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+        if ($jdkFromMaven -and $jdkFromMaven -match [regex]::Escape($jdkVersion)) {
+            Write-Host ('INFO: Java version {0} from Maven matches expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
         }
         else {
-            Write-Host ('ERROR: JDK{0} from Maven does not match the expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+            Write-Host ('ERROR: Java version {0} from Maven does not match expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
             $failed += 64
         }
     }
