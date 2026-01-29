@@ -106,13 +106,7 @@ catch {
 }
 
 # Label-based JDK validation
-<<<<<<< HEAD
 if ($Label -and -not $Label.StartsWith('windows') -and $mavenPresent) {
-||||||| parent of 85b1ae1 (don't check JDK version if label starts with 'windows')
-if ($Label -and $mavenPresent) {
-=======
-if (-not $Label.StartsWith('windows') -and $mavenPresent) {
->>>>>>> 85b1ae1 (don't check JDK version if label starts with 'windows')
     $jdk = $expectedDefaults.jdkVersion
 
     switch -Wildcard ($Label) {
