@@ -142,7 +142,7 @@ docker_expected=false
 case "${label}" in
 	*docker*)
 		docker_expected=true;;
-	windows-*)
+	linux)
 		docker_expected=true;; # docker controller and agents
 	*)
 		echo "INFO: docker is not expected from '$1' label"
