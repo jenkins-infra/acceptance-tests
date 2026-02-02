@@ -196,4 +196,32 @@ if ($Label) {
     }
 }
 
+# Docker check
+$dockerExpected = $false
+switch -Wildcard ($Label) {
+    { $_ -like '*docker*' } {
+        $dockerExpected = $true
+    }
+    { $_ -like 'windows*' } {
+        $dockerExpected = $true
+    }
+    default {
+        Write-Host ('INFO: docker is not expected from "{0}" label' -f $Label)
+    }
+}
+if ($dockerExpected) {
+    try {
+        $dockerInfo = (docker info) | Out-String
+        Write-Host ('INFO: docker is present as expected from "{0}" label, info below' -f $Label)
+        Write-Host $dockerInfo
+    }
+    catch {
+        Write-Host ('ERROR: docker is not present as expected from "{0}" label, debugging informations below' -f $Label)
+        Write-Host $env:PATH
+        Get-Command docker -ErrorAction SilentlyContinue
+        $dockerInfo = (docker info) | Out-String
+        $failed += 1024
+    }
+}
+
 exit $failed
