@@ -24,7 +24,7 @@ def generateParallelSteps(categorizedLabels) {
     categorizedLabels.each { categoryName, labels ->
         labels.each { unboundLabel ->
             def label = unboundLabel
-            def stageName = "${categoryName} / ${label}"
+            def stageName = "${label} / ${categoryName}"
             parallelNodes[stageName] = {
                 stage(stageName) {
                     node(label) {
