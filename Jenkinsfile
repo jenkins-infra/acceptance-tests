@@ -10,7 +10,7 @@ timeout(unit: 'MINUTES', time:5) {
     withEnv([
       'ARCHIVE_PATH=/cache/maven-bom-local-repo.tar.gz',
       'ARCHIVE_AGE_IN_DAYS=7',
-      'ARCHIVE_MIN_SIZE_IN_KB=998000'
+      'ARCHIVE_MIN_SIZE_IN_KB=800000'
     ]) {
       stage('Check presence of the cache archive') {
         sh '''
