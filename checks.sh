@@ -14,11 +14,17 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "INFO: label of the node: ${label}"
 fi
 
-optional_checks_to_perform='mvn jdk'
+# Optional checks to perform, not run on every controller or label
+optional_checks_to_perform='javahome mvn jdk'
+# Exceptions for trusted.ci.jenkins.io agents
 if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io' ]]; then
 	case "${label}" in
-		docker|updatecenter)
-			optional_checks_to_perform='';;
+		docker)
+			# Default JDK not as expected
+            optional_checks_to_perform='javahome mvn';;
+		updatecenter)
+			# No JDK no mvn
+            optional_checks_to_perform='';;
 	esac
 fi
 
@@ -67,12 +73,14 @@ if sudo -n whoami; then
 	failed=$((failed + 8))
 fi
 
-set +u
-if [[ -z "${JAVA_HOME}" ]]; then
-	echo "ERROR: the 'JAVA_HOME' environment variable is undefined"
-	failed=$((failed + 16))
+if [[ "${optional_checks_to_perform}" == *javahome* ]]; then
+	set +u
+	if [[ -z "${JAVA_HOME}" ]]; then
+		echo "ERROR: the 'JAVA_HOME' environment variable is undefined"
+		failed=$((failed + 16))
+	fi
+	set -u
 fi
-set -u
 
 # Check for Maven CLI
 if [[ "${optional_checks_to_perform}" == *mvn* ]]; then
