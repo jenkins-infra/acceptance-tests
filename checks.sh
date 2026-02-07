@@ -16,12 +16,18 @@ fi
 
 # Optional checks to perform, not run on every controller or label
 optional_checks_to_perform='javahome mvn jdk'
+case "${label}" in
+	*docker*)
+		optional_checks_to_perform='javahome mvn jdk docker';;
+	linux)
+		optional_checks_to_perform='javahome mvn jdk docker';; # docker controller and agents
+esac
 # Exceptions for trusted.ci.jenkins.io agents
 if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io/' ]]; then
 	case "${label}" in
 		docker|linux)
 			# Default JDK not as expected
-            optional_checks_to_perform='javahome mvn';;
+            optional_checks_to_perform='javahome mvn docker';;
 		updatecenter)
 			# No JDK no mvn
             optional_checks_to_perform='';;
@@ -162,16 +168,7 @@ else
 fi
 
 # Docker check
-docker_expected=false
-case "${label}" in
-	*docker*)
-		docker_expected=true;;
-	linux)
-		docker_expected=true;; # docker controller and agents
-	*)
-		echo "INFO: docker is not expected from '${label}' label"
-esac
-if [[ "${docker_expected}" == "true" ]]; then
+if [[ "${optional_checks_to_perform}" == *docker* ]]; then
 	docker info 2>/dev/null >/dev/null && echo "INFO: docker is present as expected from \"${label}\" label" || {
 		echo "ERROR: docker is not present as expected from \"${label}\" label, debugging informations below"
 		set +e
@@ -181,6 +178,8 @@ if [[ "${docker_expected}" == "true" ]]; then
 		set -e
 		failed=$((failed + 256))
 	}
+else
+	echo 'WARNING: Docker check skipped'
 fi
 
 exit ${failed}

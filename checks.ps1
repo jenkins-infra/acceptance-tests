@@ -21,16 +21,23 @@ $expectedDefaults = @{
 
 # Optional checks to perform, not run on every controller or label
 $optionalChecksToPerform = @('jdk', 'mvn', 'admin')
+switch ($Label) {
+    { $_ -like '*docker*' } {
+         $optionalChecksToPerform.Add('docker')
+    }
+    { $_ -like 'windows*' } {
+         $optionalChecksToPerform.Add('docker')
+    }
+}
 # Exceptions for trusted.ci.jenkins.io agents
 if ($env.JENKINS_URL -eq 'https://trusted.ci.jenkins.io/') {
     # Windows agents currently run as Administrator
-    $optionalChecksToPerform = @('jdk', 'mvn')
+    $optionalChecksToPerform.Remove('admin')
     switch ($Label) {
         { $_ -like 'docker-windows' } {
             # Default JDK not as expected
-            $optionalChecksToPerform = @('mvn')
+            $optionalChecksToPerform.Remove('jdk')
         }
-        Default {}
     }
 }
 
@@ -228,19 +235,7 @@ if ($Label) {
 }
 
 # Docker check
-$dockerExpected = $false
-switch -Wildcard ($Label) {
-    { $_ -like '*docker*' } {
-        $dockerExpected = $true
-    }
-    { $_ -like 'windows*' } {
-        $dockerExpected = $true
-    }
-    default {
-        Write-Host ('INFO: docker is not expected from "{0}" label' -f $Label)
-    }
-}
-if ($dockerExpected) {
+if ($optionalChecksToPerform.Contains('docker')) {
     try {
         $dockerInfo = (docker info) | Out-String
         Write-Host ('INFO: docker is present as expected from "{0}" label, info below' -f $Label)
@@ -253,6 +248,8 @@ if ($dockerExpected) {
         $dockerInfo = (docker info) | Out-String
         $failed += 1024
     }
+} else {
+    Write-Host 'WARNING: Docker check skipped'
 }
 
 exit $failed
