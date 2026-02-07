@@ -20,7 +20,9 @@ $expectedDefaults = @{
 }
 
 # Optional checks to perform, not run on every controller or label
-$optionalChecksToPerform = @('jdk', 'mvn', 'admin')
+$optionalChecksToPerform = [System.Collections.Generic.List[string]]::new(
+    @('jdk', 'mvn', 'admin')
+)
 switch ($Label) {
     { $_ -like '*docker*' } {
          $optionalChecksToPerform.Add('docker')
