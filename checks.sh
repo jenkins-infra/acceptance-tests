@@ -123,25 +123,19 @@ if [[ "${optional_checks_to_perform}" == *jdk* ]]; then
 
 		case ${jdk} in
 			jdk-8)
-				jdknumber="1.8"
-				;;
+				jdknumber="1.8";;
 			jdk-11)
-				jdknumber="11."
-				;;
+				jdknumber="11.";;
 			jdk-17)
-				jdknumber="17."
-				;;
+				jdknumber="17.";;
 			jdk-21)
-				jdknumber="21"
-				;;
+				jdknumber="21";;
 			jdk-25)
-				jdknumber="25"
-				;;
+				jdknumber="25";;
 			*)
 				echo "ERROR: JDK not matching the expected ${jdk} for label '${label}'"
 				mvn -v 2>&1
 				failed=$((failed + 64))
-				;;
 		esac
 
 		JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
