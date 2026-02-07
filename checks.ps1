@@ -36,7 +36,7 @@ if ($env.JENKINS_URL -eq 'https://trusted.ci.jenkins.io/') {
     # Windows agents currently run as Administrator
     $optionalChecksToPerform.Remove('admin')
     switch ($Label) {
-        { $_ -like 'docker-windows' } {
+        { $_ -like 'docker' } {
             # Default JDK not as expected
             $optionalChecksToPerform.Remove('jdk')
         }
