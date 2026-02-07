@@ -140,12 +140,8 @@ if [[ "${optional_checks_to_perform}" == *jdk* ]]; then
 
 		JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
 		if [[ "${JDKfromMaven}" != *"${jdknumber}"* ]]; then
-			if [[ "${label}" == 'docker' && "${JENKINS_URL}" == "trusted.ci.jenkins.io" ]]; then
-				echo "WARNING: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '${label}' on trusted.ci.jenkins.io"
-			else
-				echo "ERROR: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '${label}'"
-				failed=$((failed + 64))
-			fi
+			echo "ERROR: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '${label}'"
+			failed=$((failed + 64))
 		else
 			echo "INFO: JDK Version ok ${JDKfromMaven} for ${label}"
 		fi
