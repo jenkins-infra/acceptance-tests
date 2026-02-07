@@ -19,14 +19,14 @@ def categorizedLabels = [:]
 // - Linux processors: s390x
 // - Docker platforms: s390xdocker
 // - Spot and OnDemand: all of them
-// Templates in ci.jenkins.io not in trusted.ci.jenkins.io (permanent agent): 'updatecenter', 'census'
+// Templates in ci.jenkins.io not in trusted.ci.jenkins.io (permanent agent): 'updatecenter'
 
 // Labels requested in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPlugin.groovy and https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPluginWithGradle.groovy
 categorizedLabels['Maven and JDK'] = ['maven-11', 'maven-17', 'maven-21']
 categorizedLabels['VM types'] = ['ubuntu-22-amd64-maven11', 'ubuntu-22-amd64-maven17', 'ubuntu-22-amd64-maven21', 'ubuntu-22-arm64-maven17', 'ubuntu-22-arm64-maven21']
 categorizedLabels['Linux processors'] = ['linux-amd64', 'linux-arm64']
 categorizedLabels['Docker platforms'] = ['docker', 'docker-windows', 'arm64docker', 'linux', 'windows-2019', 'windows-2022', 'windows-2025']
-categorizedLabels['Permanent agent'] = ['updatecenter', 'census']
+categorizedLabels['Permanent agent'] = ['updatecenter']
 
 // Generate a parallel step for each label
 def generateParallelSteps(categorizedLabels) {
