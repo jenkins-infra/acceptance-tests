@@ -17,7 +17,7 @@ fi
 optional_checks_to_perform='mvn jdk'
 if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io' ]]; then
 	case "${label}" in
-		docker)
+		docker|updatecenter)
 			optional_checks_to_perform='';;
 	esac
 fi
