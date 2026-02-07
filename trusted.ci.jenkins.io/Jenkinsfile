@@ -12,15 +12,6 @@ properties([
 
 def categorizedLabels = [:]
 
-// TODO: remove afterward
-// Templates in ci.jenkins.io not in trusted.ci.jenkins.io:
-// - Maven and JDK: maven-8(-windows), maven-17-windows, maven-21-windows, maven-25(-windows)
-// - VM types: ubuntu-22-amd64-maven8, ubuntu-22-amd64-highmem-maven17
-// - Linux processors: s390x
-// - Docker platforms: s390xdocker
-// - Spot and OnDemand: all of them
-// Templates in ci.jenkins.io not in trusted.ci.jenkins.io (permanent agent): 'updatecenter'
-
 // Labels currently used on trusted.ci.jenkins.io (2026-02)
 // - core-taglibs-report-generator: docker&&linux
 // - crawler: maven-17
