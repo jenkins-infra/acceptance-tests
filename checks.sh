@@ -28,7 +28,7 @@ if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io/' ]]; then
 		docker|linux)
 			# Default JDK not as expected
             optional_checks_to_perform='javahome mvn docker';;
-		updatecenter)
+		updatecenter|agent-1)
 			# No JDK no mvn
             optional_checks_to_perform='';;
 	esac
