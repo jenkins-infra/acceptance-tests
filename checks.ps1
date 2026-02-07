@@ -19,6 +19,16 @@ $expectedDefaults = @{
     user           = 'jenkins'
 }
 
+$optionalChecksToPerform = @('jdk', 'mvn')
+if ($env.JENKINS_URL -eq 'https://trusted.ci.jenkins.io') {
+    switch ($Label) {
+        { $_ -like 'docker' } {
+            $optionalChecksToPerform = @()
+        }
+        Default {}
+    }
+}
+
 # Allow Mark Waite to run the same script on his home network
 if ($env:JENKINS_ADVERTISED_HOSTNAME) {
     $expectedDefaults.user = 'jagent'
@@ -91,85 +101,91 @@ else {
 
 # Maven CLI check
 $mavenPresent = $false
-$mvnOutput = ''
-try {
-    $mvnOutput = (mvn -v 2>&1) | Out-String
-    $mavenPresent = $true
-}
-catch {
-    Write-Host 'ERROR: "mvn -v" command failed to execute. Debugging informations below:'
-    Write-Host $env:PATH
-    Get-Command mvn -ErrorAction SilentlyContinue
-    $mvnOutput = (mvn -v) | Out-String
-    Write-Host $mvnOutput
-    $failed += 32
+if ($optionalChecksToPerform.Contains('mvn')) {
+    $mvnOutput = ''
+    try {
+        $mvnOutput = (mvn -v 2>&1) | Out-String
+        $mavenPresent = $true
+    }
+    catch {
+        Write-Host 'ERROR: "mvn -v" command failed to execute. Debugging informations below:'
+        Write-Host $env:PATH
+        Get-Command mvn -ErrorAction SilentlyContinue
+        $mvnOutput = (mvn -v) | Out-String
+        Write-Host $mvnOutput
+        $failed += 32
+    }
 }
 
 # Label-based JDK validation
-if ($Label -and -not $Label.StartsWith('windows') -and $mavenPresent) {
-    $jdk = $expectedDefaults.jdkVersion
+if ($optionalChecksToPerform.Contains('jdk')) {
+    if ($Label -and -not $Label.StartsWith('windows') -and $mavenPresent) {
+        $jdk = $expectedDefaults.jdkVersion
 
-    switch -Wildcard ($Label) {
-        { $_ -like '*maven-8*' -or $_ -like '*jdk-8*' -or $_ -like '*maven8*' } {
-            $jdk = 8
-        }
-        { $_ -like '*maven-11*' -or $_ -like '*jdk-11*' -or $_ -like '*maven11*' } {
-            $jdk = 11
-        }
-        { $_ -like '*maven-17*' -or $_ -like '*jdk-17*' -or $_ -like '*maven17*' } {
-            $jdk = 17
-        }
-        { $_ -like '*maven-21*' -or $_ -like '*jdk-21*' -or $_ -like '*maven21*' } {
-            $jdk = 21
-        }
-        { $_ -like '*maven-25*' -or $_ -like '*jdk-25*' -or $_ -like '*maven25*' } {
-            $jdk = 25
-        }
-        default {
-            Write-Host ('INFO: "{0}" label does not contain any JDK version. Using default jdk {1}' -f $Label, $jdk)
-        }
-    }
-
-    switch ($jdk) {
-        8  { $jdkVersion = '1.8' }
-        11 { $jdkVersion = '11' }
-        17 { $jdkVersion = '17' }
-        21 { $jdkVersion = '21' }
-        25 { $jdkVersion = '25' }
-        default {
-            Write-Host ('ERROR: JDK{0} does not match the "{1}" label' -f $jdk, $Label)
-            mvn -v
-            $failed += 64
-            $jdkVersion = $null
-        }
-    }
-
-    if ($jdkVersion) {
-        $jdkFromMaven = ''
-        $javaLine = (mvn -v 2>&1 | Select-String 'Java version').Line -replace ',', ''
-        if ($javaLine -match 'Java version:\s*([^\s,]+)') {
-            $jdkFromMaven = $Matches[1]
+        switch -Wildcard ($Label) {
+            { $_ -like '*maven-8*' -or $_ -like '*jdk-8*' -or $_ -like '*maven8*' } {
+                $jdk = 8
+            }
+            { $_ -like '*maven-11*' -or $_ -like '*jdk-11*' -or $_ -like '*maven11*' } {
+                $jdk = 11
+            }
+            { $_ -like '*maven-17*' -or $_ -like '*jdk-17*' -or $_ -like '*maven17*' } {
+                $jdk = 17
+            }
+            { $_ -like '*maven-21*' -or $_ -like '*jdk-21*' -or $_ -like '*maven21*' } {
+                $jdk = 21
+            }
+            { $_ -like '*maven-25*' -or $_ -like '*jdk-25*' -or $_ -like '*maven25*' } {
+                $jdk = 25
+            }
+            default {
+                Write-Host ('INFO: "{0}" label does not contain any JDK version. Using default jdk {1}' -f $Label, $jdk)
+            }
         }
 
-        if ($jdkFromMaven -and $jdkFromMaven -match [regex]::Escape($jdkVersion)) {
-            Write-Host ('INFO: Java version {0} from Maven matches expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+        switch ($jdk) {
+            8  { $jdkVersion = '1.8' }
+            11 { $jdkVersion = '11' }
+            17 { $jdkVersion = '17' }
+            21 { $jdkVersion = '21' }
+            25 { $jdkVersion = '25' }
+            default {
+                Write-Host ('ERROR: JDK{0} does not match the "{1}" label' -f $jdk, $Label)
+                mvn -v
+                $failed += 64
+                $jdkVersion = $null
+            }
         }
-        else {
-            Write-Host ('ERROR: Java version {0} from Maven does not match expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
-            $failed += 64
+
+        if ($jdkVersion) {
+            $jdkFromMaven = ''
+            $javaLine = (mvn -v 2>&1 | Select-String 'Java version').Line -replace ',', ''
+            if ($javaLine -match 'Java version:\s*([^\s,]+)') {
+                $jdkFromMaven = $Matches[1]
+            }
+
+            if ($jdkFromMaven -and $jdkFromMaven -match [regex]::Escape($jdkVersion)) {
+                Write-Host ('INFO: Java version {0} from Maven matches expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+            }
+            else {
+                Write-Host ('ERROR: Java version {0} from Maven does not match expected JDK{1} from "{2}" label' -f $jdkFromMaven, $jdkVersion, $Label)
+                $failed += 64
+            }
         }
     }
 }
 
 # Maven version check
-if ($mavenPresent -and $mvnOutput -match [regex]::Escape($expectedDefaults.mavenVersion)) {
-    Write-Host ('INFO: Maven output match the expected {0} version from "{1}" label:' -f $expectedDefaults.mavenVersion, $Label)
-    Write-Host $mvnOutput
-}
-else {
-    Write-Host ('ERROR: Maven output does not match the expected {0} version from "{1}" label:' -f $expectedDefaults.mavenVersion, $Label)
-    Write-Host $mvnOutput
-    $failed += 128
+if ($optionalChecksToPerform.Contains('mvn')) {
+    if ($mavenPresent -and $mvnOutput -match [regex]::Escape($expectedDefaults.mavenVersion)) {
+        Write-Host ('INFO: Maven output match the expected {0} version from "{1}" label:' -f $expectedDefaults.mavenVersion, $Label)
+        Write-Host $mvnOutput
+    }
+    else {
+        Write-Host ('ERROR: Maven output does not match the expected {0} version from "{1}" label:' -f $expectedDefaults.mavenVersion, $Label)
+        Write-Host $mvnOutput
+        $failed += 128
+    }
 }
 
 # Windows version check
