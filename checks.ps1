@@ -40,7 +40,7 @@ switch ($Label) {
     }
 }
 # Exceptions for trusted.ci.jenkins.io agents
-if ($env.JENKINS_URL -eq 'https://trusted.ci.jenkins.io/') {
+if ($env:JENKINS_URL -eq 'https://trusted.ci.jenkins.io/') {
     # Windows agents currently run as Administrator
     $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Admin)
     switch ($Label) {
