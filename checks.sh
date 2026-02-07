@@ -19,7 +19,7 @@ optional_checks_to_perform='javahome mvn jdk'
 # Exceptions for trusted.ci.jenkins.io agents
 if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io/' ]]; then
 	case "${label}" in
-		docker)
+		docker|linux)
 			# Default JDK not as expected
             optional_checks_to_perform='javahome mvn';;
 		updatecenter)
