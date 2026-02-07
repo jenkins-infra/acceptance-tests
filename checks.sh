@@ -11,7 +11,7 @@ DefaultUser="jenkins"
 label=''
 if [ $# -ge 1 ] && [ -n "$1" ]; then
 	label="$1"
-	echo "INFO: label of the node: ${label}"
+	echo "INFO: label of the node: '${label}'"
 fi
 
 # Optional checks to perform, not run on every controller or label
@@ -49,14 +49,14 @@ if test -e /proc/meminfo; then
 fi
 
 if [[ "$(locale -a)" =~ ${DefaultLocale} ]]; then
-	echo "${DefaultLocale} locale is available"
+	echo "INFO: ${DefaultLocale} locale is available"
 else
 	echo "ERROR: ${DefaultLocale} locale is not available $(locale -a)"
 	failed=$((failed + 1))
 fi
 
 if getent passwd ${DefaultUser} >/dev/null; then
-	echo "'${DefaultUser}' user exists"
+	echo "INFO: '${DefaultUser}' user exists"
 else
 	echo "ERROR: '${DefaultUser}' user does not exist"
 	failed=$((failed + 2))
@@ -118,7 +118,7 @@ if [[ "${optional_checks_to_perform}" == *jdk* ]]; then
 			*maven-25 | *jdk-25 | *maven25)
 				jdk="jdk-25";;
 			*)
-				echo "Label '${label}' specified. Using default jdk."
+				echo "INFO: Label '${label}' specified. Using default jdk."
 		esac
 
 		case ${jdk} in
@@ -147,7 +147,7 @@ if [[ "${optional_checks_to_perform}" == *jdk* ]]; then
 				failed=$((failed + 64))
 			fi
 		else
-			echo "JDK Version ok ${JDKfromMaven} for ${label}"
+			echo "INFO: JDK Version ok ${JDKfromMaven} for ${label}"
 		fi
 	fi
 else
@@ -159,7 +159,7 @@ if [[ "${optional_checks_to_perform}" == *mvn* ]]; then
 		echo "ERROR Maven version not matching what is expected : expecting ${DefaultMavenVersion} for label '${label}' found $(mvn -v 2>&1)"
 		failed=$((failed + 128))
 	else
-		echo "Maven version ${DefaultMavenVersion} OK for label '${label}'"
+		echo "INFO: Maven version ${DefaultMavenVersion} OK for label '${label}'"
 	fi
 else
 	echo 'WARNING: Expected Maven version check skipped'
