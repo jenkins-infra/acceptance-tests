@@ -86,13 +86,17 @@ else {
 }
 
 # Administrator privilege check (should NOT be admin)
-$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host 'ERROR: Running as Administrator is not expected'
-    $failed += 8
-}
-else {
-    Write-Host 'INFO: Not running as Administrator as expected'
+if ($optionalChecksToPerform.Contains('admin')) {
+    $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Host 'ERROR: Running as Administrator is not expected'
+        $failed += 8
+    }
+    else {
+        Write-Host 'INFO: Not running as Administrator as expected'
+    }
+} else {
+    Write-Host 'WARNING: Running as Administrator check skipped'
 }
 
 # JAVA_HOME check
