@@ -21,7 +21,7 @@ CHECK_MAVEN=2
 CHECK_JDK=4
 CHECK_DOCKER=8
 
-# Optional checks to perform, not run on every controller or label
+# Default optional checks
 optional_checks=$((CHECK_JAVAHOME | CHECK_MAVEN | CHECK_JDK))
 case "${label}" in
 	*docker*)

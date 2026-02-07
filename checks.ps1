@@ -19,6 +19,7 @@ $expectedDefaults = @{
     user           = 'jenkins'
 }
 
+# Optional checks to perform
 [Flags()]
 enum OptionalCheck {
     None   = 0
@@ -28,7 +29,7 @@ enum OptionalCheck {
     Docker = 8
 }
 
-# Optional checks to perform, not run on every controller or label
+# Default optional checks
 $optionalChecks = [OptionalCheck]::Jdk -bor [OptionalCheck]::Maven -bor [OptionalCheck]::Admin
 switch ($Label) {
     { $_ -like '*docker*' } {
