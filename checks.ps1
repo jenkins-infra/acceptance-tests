@@ -22,7 +22,7 @@ $expectedDefaults = @{
 # Optional checks to perform, not run on every controller or label
 $optionalChecksToPerform = @('jdk', 'mvn', 'admin')
 # Exceptions for trusted.ci.jenkins.io agents
-if ($env.JENKINS_URL -eq 'https://trusted.ci.jenkins.io') {
+if ($env.JENKINS_URL -eq 'https://trusted.ci.jenkins.io/') {
     # Windows agents currently run as Administrator
     $optionalChecksToPerform = @('jdk', 'mvn')
     switch ($Label) {
