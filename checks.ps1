@@ -19,26 +19,33 @@ $expectedDefaults = @{
     user           = 'jenkins'
 }
 
+[Flags()]
+enum OptionalCheck {
+    None   = 0
+    Jdk    = 1
+    Maven  = 2
+    Admin  = 4
+    Docker = 8
+}
+
 # Optional checks to perform, not run on every controller or label
-$optionalChecksToPerform = [System.Collections.Generic.List[string]]::new(
-    @('jdk', 'mvn', 'admin')
-)
+$optionalChecks = [OptionalCheck]::Jdk -bor [OptionalCheck]::Maven -bor [OptionalCheck]::Admin
 switch ($Label) {
     { $_ -like '*docker*' } {
-         $optionalChecksToPerform.Add('docker')
+        $optionalChecks = $optionalChecks -bor [OptionalCheck]::Docker
     }
     { $_ -like 'windows*' } {
-         $optionalChecksToPerform.Add('docker')
+        $optionalChecks = $optionalChecks -bor [OptionalCheck]::Docker
     }
 }
 # Exceptions for trusted.ci.jenkins.io agents
 if ($env.JENKINS_URL -eq 'https://trusted.ci.jenkins.io/') {
     # Windows agents currently run as Administrator
-    $optionalChecksToPerform.Remove('admin')
+    $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Admin)
     switch ($Label) {
         { $_ -like 'docker' } {
             # Default JDK not as expected
-            $optionalChecksToPerform.Remove('jdk')
+            $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Jdk)
         }
     }
 }
@@ -51,6 +58,7 @@ if ($env:JENKINS_ADVERTISED_HOSTNAME) {
 Write-Host "INFO: Label passed in parameter: $Label"
 Write-Host "INFO: expected default values below"
 Write-Host ($expectedDefaults | Out-String)
+Write-Host "INFO: Optional checks enabled: $optionalChecks"
 
 # System information
 $computerInfo = (Get-ComputerInfo)
@@ -95,7 +103,7 @@ else {
 }
 
 # Administrator privilege check (should NOT be admin)
-if ($optionalChecksToPerform.Contains('admin')) {
+if ($optionalChecks.HasFlag([OptionalCheck]::Admin)) {
     $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
     if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
         Write-Host 'ERROR: Running as Administrator is not expected'
@@ -119,7 +127,7 @@ else {
 
 # Maven CLI check
 $mavenPresent = $false
-if ($optionalChecksToPerform.Contains('mvn')) {
+if ($optionalChecks.HasFlag([OptionalCheck]::Maven)) {
     $mvnOutput = ''
     try {
         $mvnOutput = (mvn -v 2>&1) | Out-String
@@ -138,7 +146,7 @@ if ($optionalChecksToPerform.Contains('mvn')) {
 }
 
 # Label-based JDK validation
-if ($optionalChecksToPerform.Contains('jdk')) {
+if ($optionalChecks.HasFlag([OptionalCheck]::Jdk)) {
     if ($Label -and -not $Label.StartsWith('windows') -and $mavenPresent) {
         $jdk = $expectedDefaults.jdkVersion
 
@@ -198,7 +206,7 @@ if ($optionalChecksToPerform.Contains('jdk')) {
 }
 
 # Maven version check
-if ($optionalChecksToPerform.Contains('mvn')) {
+if ($optionalChecks.HasFlag([OptionalCheck]::Maven)) {
     if ($mavenPresent -and $mvnOutput -match [regex]::Escape($expectedDefaults.mavenVersion)) {
         Write-Host ('INFO: Maven output match the expected {0} version from "{1}" label:' -f $expectedDefaults.mavenVersion, $Label)
         Write-Host $mvnOutput
@@ -237,7 +245,7 @@ if ($Label) {
 }
 
 # Docker check
-if ($optionalChecksToPerform.Contains('docker')) {
+if ($optionalChecks.HasFlag([OptionalCheck]::Docker)) {
     try {
         $dockerInfo = (docker info) | Out-String
         Write-Host ('INFO: docker is present as expected from "{0}" label, info below' -f $Label)

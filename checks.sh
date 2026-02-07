@@ -14,25 +14,38 @@ if [ $# -ge 1 ] && [ -n "$1" ]; then
 	echo "INFO: label of the node: '${label}'"
 fi
 
+# Optional check bitmask flags
+CHECK_NONE=0
+CHECK_JAVAHOME=1
+CHECK_MAVEN=2
+CHECK_JDK=4
+CHECK_DOCKER=8
+
 # Optional checks to perform, not run on every controller or label
-optional_checks_to_perform='javahome mvn jdk'
+optional_checks=$((CHECK_JAVAHOME | CHECK_MAVEN | CHECK_JDK))
 case "${label}" in
 	*docker*)
-		optional_checks_to_perform='javahome mvn jdk docker';;
+		optional_checks=$((optional_checks | CHECK_DOCKER));;
 	linux)
-		optional_checks_to_perform='javahome mvn jdk docker';; # docker controller and agents
+		optional_checks=$((optional_checks | CHECK_DOCKER));; # docker controller and agents
 esac
 # Exceptions for trusted.ci.jenkins.io agents
 if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io/' ]]; then
 	case "${label}" in
 		docker|linux)
 			# Default JDK not as expected
-            optional_checks_to_perform='javahome mvn docker';;
+            optional_checks=$((optional_checks & ~CHECK_JDK));;
 		updatecenter|agent-1)
-			# No JDK no mvn
-            optional_checks_to_perform='';;
+			# No optional check
+            optional_checks=$((CHECK_NONE));;
 	esac
 fi
+
+has_check() {
+    (( optional_checks & $1 ))
+}
+
+echo "INFO: Optional checks bitmask: ${optional_checks}"
 
 # Allow Mark Waite to run the same script on his home network
 if [ -v JENKINS_ADVERTISED_HOSTNAME ]; then
@@ -79,7 +92,7 @@ if sudo -n whoami; then
 	failed=$((failed + 8))
 fi
 
-if [[ "${optional_checks_to_perform}" == *javahome* ]]; then
+if has_check CHECK_JAVAHOME; then
 	set +u
 	if [[ -z "${JAVA_HOME}" ]]; then
 		echo "ERROR: the 'JAVA_HOME' environment variable is undefined"
@@ -91,7 +104,7 @@ else
 fi
 
 # Check for Maven CLI
-if [[ "${optional_checks_to_perform}" == *mvn* ]]; then
+if has_check CHECK_MAVEN; then
 	mvn -v 2>/dev/null >/dev/null || {
 		set +e
 		echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:";
@@ -109,7 +122,7 @@ fi
 # Java 8 needs to include '1.8' in the output
 # Java 11 needs to include '11.' in the output
 # Java 17 needs to include '17.' in the output
-if [[ "${optional_checks_to_perform}" == *jdk* ]]; then
+if has_check CHECK_JDK; then
 	if [ -n "${label}" ]; then
 		jdk="${DefaultJDKVersion}"
 		case "${label}" in
@@ -156,7 +169,7 @@ else
 	echo 'WARNING: Expected JDK check skipped'
 fi
 
-if [[ "${optional_checks_to_perform}" == *mvn* ]]; then
+if has_check CHECK_MAVEN; then
 	if [[ "$(mvn -v 2>&1)" != *"${DefaultMavenVersion}"* ]]; then
 		echo "ERROR Maven version not matching what is expected : expecting ${DefaultMavenVersion} for label '${label}' found $(mvn -v 2>&1)"
 		failed=$((failed + 128))
@@ -168,7 +181,7 @@ else
 fi
 
 # Docker check
-if [[ "${optional_checks_to_perform}" == *docker* ]]; then
+if has_check CHECK_DOCKER; then
 	docker info 2>/dev/null >/dev/null && echo "INFO: docker is present as expected from \"${label}\" label" || {
 		echo "ERROR: docker is not present as expected from \"${label}\" label, debugging informations below"
 		set +e
