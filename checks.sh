@@ -80,6 +80,8 @@ if [[ "${optional_checks_to_perform}" == *javahome* ]]; then
 		failed=$((failed + 16))
 	fi
 	set -u
+else
+	echo 'WARNING: JAVA_HOME check skipped'
 fi
 
 # Check for Maven CLI
@@ -93,6 +95,8 @@ if [[ "${optional_checks_to_perform}" == *mvn* ]]; then
 		set -e
 		exit 1;
 	}
+else
+	echo 'WARNING: "mvn -v" check skipped'
 fi
 
 # This check relies on the java version output of the 'mvn -v' command
@@ -152,6 +156,8 @@ if [[ "${optional_checks_to_perform}" == *jdk* ]]; then
 			echo "JDK Version ok ${JDKfromMaven} for ${label}"
 		fi
 	fi
+else
+	echo 'WARNING: Expected JDK check skipped'
 fi
 
 if [[ "${optional_checks_to_perform}" == *mvn* ]]; then
@@ -161,6 +167,8 @@ if [[ "${optional_checks_to_perform}" == *mvn* ]]; then
 	else
 		echo "Maven version ${DefaultMavenVersion} OK for label '${label}'"
 	fi
+else
+	echo 'WARNING: Expected Maven version check skipped'
 fi
 
 # Docker check

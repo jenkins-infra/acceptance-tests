@@ -124,6 +124,8 @@ if ($optionalChecksToPerform.Contains('mvn')) {
         Write-Host $mvnOutput
         $failed += 32
     }
+} else {
+    Write-Host 'WARNING: "mvn -v" check skipped'
 }
 
 # Label-based JDK validation
@@ -182,6 +184,8 @@ if ($optionalChecksToPerform.Contains('jdk')) {
             }
         }
     }
+} else {
+    Write-Host 'WARNING: Expected JDK check skipped'
 }
 
 # Maven version check
@@ -195,6 +199,8 @@ if ($optionalChecksToPerform.Contains('mvn')) {
         Write-Host $mvnOutput
         $failed += 128
     }
+} else {
+    Write-Host 'WARNING: Expected Maven output check skipped'
 }
 
 # Windows version check
