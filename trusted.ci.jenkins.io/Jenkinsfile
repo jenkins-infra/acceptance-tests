@@ -21,13 +21,21 @@ def categorizedLabels = [:]
 // - Spot and OnDemand: all of them
 // Templates in ci.jenkins.io not in trusted.ci.jenkins.io (permanent agent): 'updatecenter'
 
-// Labels requested in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPlugin.groovy and https://github.com/jenkins-infra/pipeline-library/blob/master/vars/buildPluginWithGradle.groovy
-categorizedLabels['Maven and JDK'] = ['maven-11', 'maven-17', 'maven-21']
-// TODO: confirm not used on trusted.ci (?)
-// categorizedLabels['VM types'] = ['ubuntu-22-amd64-maven11', 'ubuntu-22-amd64-maven17', 'ubuntu-22-amd64-maven21', 'ubuntu-22-arm64-maven17', 'ubuntu-22-arm64-maven21']
-categorizedLabels['Linux processors'] = ['linux-amd64', 'linux-arm64']
-categorizedLabels['Docker platforms'] = ['docker', 'docker-windows', 'arm64docker', 'linux', 'windows-2019', 'windows-2022', 'windows-2025']
-categorizedLabels['Permanent agent'] = ['updatecenter']
+// Labels currently used on trusted.ci.jenkins.io (2026-02)
+// - core-taglibs-report-generator: docker&&linux
+// - crawler: maven-17
+// - javadoc: linux
+// - jenkins.io: docker&&linux, updatecenter
+// - purge-fastly-for-security-advisory: agent-1
+// - reindex_maven: linux
+// - repository-permissions-updater: maven-25
+// - update-center-sync-recent-releases: updatecenter
+// - update_center: updatecenter
+// - docker controller & agents: linux, windows-2019, windows-2022, windows-2025
+
+categorizedLabels['Maven and JDK'] = ['maven-17', 'maven-25']
+categorizedLabels['Docker platforms'] = ['docker', 'linux', 'windows-2019', 'windows-2022', 'windows-2025']
+categorizedLabels['Permanent agent'] = ['agent-1', 'updatecenter']
 
 // Generate a parallel step for each label
 def generateParallelSteps(categorizedLabels) {
