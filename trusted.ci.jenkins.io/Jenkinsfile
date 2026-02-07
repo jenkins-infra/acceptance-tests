@@ -43,8 +43,7 @@ def generateParallelSteps(categorizedLabels) {
                             if (isUnix()) {
                                 sh 'bash ./checks.sh "${NODE_LABEL}"'
                             } else {
-                                pwsh 'Get-ChildItem env:' || echo 'gci env failed'
-                                pwsh 'pwsh ./checks.ps1 -Label $env:NODE_LABEL' || echo 'failure'
+                                pwsh 'pwsh ./checks.ps1 -Label $env:NODE_LABEL'
                             }
                         }
                     }
