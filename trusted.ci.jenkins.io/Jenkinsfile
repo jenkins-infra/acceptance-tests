@@ -43,7 +43,8 @@ def generateParallelSteps(categorizedLabels) {
                             if (isUnix()) {
                                 sh 'bash ./checks.sh "${NODE_LABEL}"'
                             } else {
-                                pwsh 'pwsh ./checks.ps1 -Label "${env:NODE_LABEL}"'
+                                pwsh 'env:'
+                                pwsh 'pwsh ./checks.ps1 -Label env:NODE_LABEL'
                             }
                         }
                     }
