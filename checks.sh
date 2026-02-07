@@ -107,41 +107,41 @@ if [[ "${optional_checks_to_perform}" == *jdk* ]]; then
 	if [ -n "${label}" ]; then
 		jdk="${DefaultJDKVersion}"
 		case "${label}" in
-		*maven-8 | *jdk-8 | *maven8)
-			jdk="jdk-8";;
-		*maven-11 | *jdk-11 | *maven11)
-			jdk="jdk-11";;
-		*maven-17 | *jdk-17 | *maven17)
-			jdk="jdk-17";;
-		*maven-21 | *jdk-21 | *maven21)
-			jdk="jdk-21";;
-		*maven-25 | *jdk-25 | *maven25)
-			jdk="jdk-25";;
-		*)
-			echo "Label '${label}' specified. Using default jdk."
+			*maven-8 | *jdk-8 | *maven8)
+				jdk="jdk-8";;
+			*maven-11 | *jdk-11 | *maven11)
+				jdk="jdk-11";;
+			*maven-17 | *jdk-17 | *maven17)
+				jdk="jdk-17";;
+			*maven-21 | *jdk-21 | *maven21)
+				jdk="jdk-21";;
+			*maven-25 | *jdk-25 | *maven25)
+				jdk="jdk-25";;
+			*)
+				echo "Label '${label}' specified. Using default jdk."
 		esac
 
 		case ${jdk} in
-		jdk-8)
-			jdknumber="1.8"
-			;;
-		jdk-11)
-			jdknumber="11."
-			;;
-		jdk-17)
-			jdknumber="17."
-			;;
-		jdk-21)
-			jdknumber="21"
-			;;
-		jdk-25)
-			jdknumber="25"
-			;;
-		*)
-			echo "ERROR: JDK not matching the expected ${jdk} for label '${label}'"
-			mvn -v 2>&1
-			failed=$((failed + 64))
-			;;
+			jdk-8)
+				jdknumber="1.8"
+				;;
+			jdk-11)
+				jdknumber="11."
+				;;
+			jdk-17)
+				jdknumber="17."
+				;;
+			jdk-21)
+				jdknumber="21"
+				;;
+			jdk-25)
+				jdknumber="25"
+				;;
+			*)
+				echo "ERROR: JDK not matching the expected ${jdk} for label '${label}'"
+				mvn -v 2>&1
+				failed=$((failed + 64))
+				;;
 		esac
 
 		JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
