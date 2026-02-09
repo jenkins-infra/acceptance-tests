@@ -28,9 +28,10 @@ case "${label}" in
 		optional_checks=$((optional_checks | CHECK_DOCKER));;
 	linux)
 		optional_checks=$((optional_checks | CHECK_DOCKER));; # docker controller and agents
+	*)
 esac
 # Exceptions for trusted.ci.jenkins.io agents
-if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io/' ]]; then
+if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
 	case "${label}" in
 		docker|linux)
 			# Default JDK not as expected
@@ -38,6 +39,7 @@ if [[ "${JENKINS_URL}" == 'https://trusted.ci.jenkins.io/' ]]; then
 		updatecenter|agent-1)
 			# No optional check
             optional_checks=$((CHECK_NONE));;
+		*)
 	esac
 fi
 
