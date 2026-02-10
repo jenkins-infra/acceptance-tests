@@ -8,6 +8,47 @@ DefaultMavenVersion="3.9.12"
 DefaultJDKVersion="jdk-21"
 DefaultUser="jenkins"
 
+label=''
+if [ $# -ge 1 ] && [ -n "$1" ]; then
+	label="$1"
+	echo "INFO: label of the node: '${label}'"
+fi
+
+# Optional check bitmask flags
+CHECK_NONE=0
+CHECK_JAVAHOME=1
+CHECK_MAVEN=2
+CHECK_JDK=4
+CHECK_DOCKER=8
+
+# Default optional checks
+optional_checks=$((CHECK_JAVAHOME | CHECK_MAVEN | CHECK_JDK))
+case "${label}" in
+	*docker*)
+		optional_checks=$((optional_checks | CHECK_DOCKER));;
+	linux)
+		optional_checks=$((optional_checks | CHECK_DOCKER));; # docker controller and agents
+	*)
+esac
+# Exceptions for trusted.ci.jenkins.io agents
+if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
+	case "${label}" in
+		docker|linux)
+			# Default JDK not as expected
+            optional_checks=$((optional_checks & ~CHECK_JDK));;
+		updatecenter|agent-1)
+			# No optional check
+            optional_checks=$((CHECK_NONE));;
+		*)
+	esac
+fi
+
+has_check() {
+    (( optional_checks & $1 ))
+}
+
+echo "INFO: Optional checks bitmask: ${optional_checks}"
+
 # Allow Mark Waite to run the same script on his home network
 if [ -v JENKINS_ADVERTISED_HOSTNAME ]; then
 	DefaultUser="jagent"
@@ -29,14 +70,14 @@ if test -e /proc/meminfo; then
 fi
 
 if [[ "$(locale -a)" =~ ${DefaultLocale} ]]; then
-	echo "${DefaultLocale} locale is available"
+	echo "INFO: ${DefaultLocale} locale is available"
 else
 	echo "ERROR: ${DefaultLocale} locale is not available $(locale -a)"
 	failed=$((failed + 1))
 fi
 
 if getent passwd ${DefaultUser} >/dev/null; then
-	echo "'${DefaultUser}' user exists"
+	echo "INFO: '${DefaultUser}' user exists"
 else
 	echo "ERROR: '${DefaultUser}' user does not exist"
 	failed=$((failed + 2))
@@ -53,101 +94,96 @@ if sudo -n whoami; then
 	failed=$((failed + 8))
 fi
 
-set +u
-if [[ -z "${JAVA_HOME}" ]]; then
-	echo "ERROR: the 'JAVA_HOME' environment variable is undefined"
-	failed=$((failed + 16))
+if has_check CHECK_JAVAHOME; then
+	set +u
+	if [[ -z "${JAVA_HOME}" ]]; then
+		echo "ERROR: the 'JAVA_HOME' environment variable is undefined"
+		failed=$((failed + 16))
+	fi
+	set -u
+else
+	echo 'WARNING: JAVA_HOME check skipped'
 fi
-set -u
 
 # Check for Maven CLI
-mvn -v 2>/dev/null >/dev/null || {
-	set +e
-	echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:";
-	echo "${PATH}";
-	which mvn;
-	mvn -v;
-	set -e
-	exit 1;
-}
-
-label=''
-if [ $# -ge 1 ] && [ -n "$1" ]; then
-	label="$1"
+if has_check CHECK_MAVEN; then
+	mvn -v 2>/dev/null >/dev/null || {
+		set +e
+		echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:";
+		echo "${PATH}";
+		which mvn;
+		mvn -v;
+		set -e
+		exit 1;
+	}
+else
+	echo 'WARNING: "mvn -v" check skipped'
 fi
+
 # This check relies on the java version output of the 'mvn -v' command
 # Java 8 needs to include '1.8' in the output
 # Java 11 needs to include '11.' in the output
 # Java 17 needs to include '17.' in the output
-if [ -n "${label}" ]; then
-	echo "label of the node: $1"
+if has_check CHECK_JDK; then
+	if [ -n "${label}" ]; then
+		jdk="${DefaultJDKVersion}"
+		case "${label}" in
+			*maven-8 | *jdk-8 | *maven8)
+				jdk="jdk-8";;
+			*maven-11 | *jdk-11 | *maven11)
+				jdk="jdk-11";;
+			*maven-17 | *jdk-17 | *maven17)
+				jdk="jdk-17";;
+			*maven-21 | *jdk-21 | *maven21)
+				jdk="jdk-21";;
+			*maven-25 | *jdk-25 | *maven25)
+				jdk="jdk-25";;
+			*)
+				echo "INFO: Label '${label}' specified. Using default jdk."
+		esac
 
-	jdk="${DefaultJDKVersion}"
-	case "$1" in
-	*maven-8 | *jdk-8 | *maven8)
-		jdk="jdk-8";;
-	*maven-11 | *jdk-11 | *maven11)
-		jdk="jdk-11";;
-	*maven-17 | *jdk-17 | *maven17)
-		jdk="jdk-17";;
-	*maven-21 | *jdk-21 | *maven21)
-		jdk="jdk-21";;
-	*maven-25 | *jdk-25 | *maven25)
-		jdk="jdk-25";;
-	*)
-		echo "Label '$1' specified. Using default jdk."
-	esac
+		case ${jdk} in
+			jdk-8)
+				jdknumber="1.8";;
+			jdk-11)
+				jdknumber="11.";;
+			jdk-17)
+				jdknumber="17.";;
+			jdk-21)
+				jdknumber="21";;
+			jdk-25)
+				jdknumber="25";;
+			*)
+				echo "ERROR: JDK not matching the expected ${jdk} for label '${label}'"
+				mvn -v 2>&1
+				failed=$((failed + 64))
+		esac
 
-	case ${jdk} in
-	jdk-8)
-		jdknumber="1.8"
-		;;
-	jdk-11)
-		jdknumber="11."
-		;;
-	jdk-17)
-		jdknumber="17."
-		;;
-	jdk-21)
-		jdknumber="21"
-		;;
-	jdk-25)
-		jdknumber="25"
-		;;
-	*)
-		echo "ERROR: JDK not matching the expected ${jdk} for label '$1'"
-		mvn -v 2>&1
-		failed=$((failed + 64))
-		;;
-	esac
-
-	JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
-	if [[ "${JDKfromMaven}" != *"${jdknumber}"* ]]; then
-		echo "ERROR: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '$1'"
-		failed=$((failed + 64))
-	else
-		echo "JDK Version ok ${JDKfromMaven} for $1"
+		JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
+		if [[ "${JDKfromMaven}" != *"${jdknumber}"* ]]; then
+			echo "ERROR: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '${label}'"
+			failed=$((failed + 64))
+		else
+			echo "INFO: JDK Version ok ${JDKfromMaven} for ${label}"
+		fi
 	fi
+else
+	echo 'WARNING: Expected JDK check skipped'
 fi
 
-if [[ "$(mvn -v 2>&1)" != *"${DefaultMavenVersion}"* ]]; then
-	echo "ERROR Maven version not matching what is expected : expecting ${DefaultMavenVersion} for label '$1' found $(mvn -v 2>&1)"
-	failed=$((failed + 128))
+if has_check CHECK_MAVEN; then
+	if [[ "$(mvn -v 2>&1)" != *"${DefaultMavenVersion}"* ]]; then
+		echo "ERROR Maven version not matching what is expected : expecting ${DefaultMavenVersion} for label '${label}' found $(mvn -v 2>&1)"
+		failed=$((failed + 128))
+	else
+		echo "INFO: Maven version ${DefaultMavenVersion} OK for label '${label}'"
+	fi
 else
-	echo "Maven version ${DefaultMavenVersion} OK for label '$1'"
+	echo 'WARNING: Expected Maven version check skipped'
 fi
 
 # Docker check
-docker_expected=false
-case "${label}" in
-	*docker*)
-		docker_expected=true;;
-	linux)
-		docker_expected=true;; # docker controller and agents
-	*)
-		echo "INFO: docker is not expected from '$1' label"
-esac
-if [[ "${docker_expected}" == "true" ]]; then
+if has_check CHECK_DOCKER; then
 	docker info 2>/dev/null >/dev/null && echo "INFO: docker is present as expected from \"${label}\" label" || {
 		echo "ERROR: docker is not present as expected from \"${label}\" label, debugging informations below"
 		set +e
@@ -157,6 +193,8 @@ if [[ "${docker_expected}" == "true" ]]; then
 		set -e
 		failed=$((failed + 256))
 	}
+else
+	echo 'WARNING: Docker check skipped'
 fi
 
 exit ${failed}

@@ -1,145 +1,59 @@
-parallel "linux": {
-  stage('Test default "linux" agent label with tools') {
-    node('linux') {
-      sh 'java -version'
-      sh 'mvn -v'
-      
-      jdk21 = tool name: "jdk21", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk21}/bin", "JAVA_HOME=${jdk21}"]) {
-        sh 'mvn -v'
-      }
+//!/usr/bin/env groovy
 
-      jdk17 = tool name: "jdk17", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk17}/bin", "JAVA_HOME=${jdk17}"]) {
-        sh 'mvn -v'
-      }
+// Only one build running at a time, stop prior build if new build starts
+def buildNumber = BUILD_NUMBER as int; if (buildNumber > 1) milestone(buildNumber - 1); milestone(buildNumber) // Thanks to jglick
 
-      jdk11 = tool name: "jdk11", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk11}/bin", "JAVA_HOME=${jdk11}"]) {
-        sh 'mvn -v'
-      }
-    
-      jdk8 = tool name: "jdk8", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk8}/bin", "JAVA_HOME=${jdk8}"]) {
-          sh 'mvn -v'
-      }
+properties([
+    buildDiscarder(logRotator(numToKeepStr: '15')),
+    disableResume(),
+    durabilityHint('PERFORMANCE_OPTIMIZED'),
+    pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
+])
+
+def categorizedLabels = [:]
+
+// Labels currently used on trusted.ci.jenkins.io (2026-02)
+// - core-taglibs-report-generator: docker&&linux
+// - crawler: maven-17
+// - javadoc: linux
+// - jenkins.io: docker&&linux, updatecenter
+// - purge-fastly-for-security-advisory: agent-1
+// - reindex_maven: linux
+// - repository-permissions-updater: maven-25
+// - update-center-sync-recent-releases: updatecenter
+// - update_center: updatecenter
+// - docker controller & agents: linux, windows-2019, windows-2022, windows-2025
+
+categorizedLabels['Maven and JDK'] = ['maven-17', 'maven-25']
+categorizedLabels['Docker platforms'] = ['docker', 'linux', 'windows-2019', 'windows-2022', 'windows-2025']
+categorizedLabels['Permanent agents'] = ['agent-1', 'updatecenter']
+
+// Generate a parallel step for each label
+def generateParallelSteps(categorizedLabels) {
+    def parallelNodes = [:]
+    categorizedLabels.each { categoryName, labels ->
+        labels.each { unboundLabel ->
+            def label = unboundLabel
+            def stageName = "${label} / ${categoryName}"
+            parallelNodes[stageName] = {
+                stage(stageName) {
+                    node(label) {
+                        withEnv(["NODE_LABEL=${label}"]) {
+                            checkout scm
+                            if (isUnix()) {
+                                sh 'bash ./checks.sh "${NODE_LABEL}"'
+                            } else {
+                                pwsh 'pwsh ./checks.ps1 -Label "${env:NODE_LABEL}"'
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
-},
-"ubuntu-22-amd64-maven-11": {
-  stage('Test specific "ubuntu-22-amd64-maven-11" agent label') {
-    node('ubuntu-22-amd64-maven-11') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"ubuntu-22-amd64-maven-17": {
-  stage('Test specific "ubuntu-22-amd64-maven-17" agent label') {
-    node('ubuntu-22-amd64-maven-17') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"ubuntu-22-amd64-maven-21": {
-  stage('Test specific "ubuntu-22-amd64-maven-21" agent label') {
-    node('ubuntu-22-amd64-maven-21') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"ubuntu-22-arm64-maven-21": {
-  stage('Test specific "ubuntu-22-arm64-maven-21" agent label') {
-    node('ubuntu-22-arm64-maven-21') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"win-2019-amd64-maven-11": {
-  stage('Test specific "win-2019-amd64-maven-11" agent label') {
-    node('win-2019-amd64-maven-11') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2019-amd64-maven-17": {
-  stage('Test specific "win-2019-amd64-maven-17" agent label') {
-    node('win-2019-amd64-maven-17') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2019-amd64-maven-21": {
-  stage('Test specific "win-2019-amd64-maven-21" agent label') {
-    node('win-2019-amd64-maven-21') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2022-amd64-maven-11": {
-  stage('Test specific "win-2022-amd64-maven-11" agent label') {
-    node('win-2022-amd64-maven-11') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2022-amd64-maven-17": {
-  stage('Test specific "win-2022-amd64-maven-17" agent label') {
-    node('win-2022-amd64-maven-17') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2022-amd64-maven-21": {
-  stage('Test specific "win-2022-amd64-maven-21" agent label') {
-    node('win-2022-amd64-maven-21') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2025-amd64-maven-25": {
-  stage('Test specific "win-2025-amd64-maven-25" agent label') {
-    node('win-2025-amd64-maven-25') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
+    return parallelNodes
+}
+
+timeout(unit: 'MINUTES', time: 29) {
+    parallel generateParallelSteps(categorizedLabels)
 }
