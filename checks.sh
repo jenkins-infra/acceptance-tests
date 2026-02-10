@@ -1,15 +1,17 @@
 #!/bin/bash
+#shellcheck disable=SC2310
+
 set -eux -o pipefail
 
-DefaultLocale="en_US.utf8"
 # A pull request can be used as validation for ci.jenkins.io when changing an agent template characteristics
 # See process following TDD principle mentioned at https://github.com/jenkins-infra/helpdesk/issues/4949#issuecomment-3755425511
-DefaultMavenVersion="3.9.12"
-DefaultJDKVersion="jdk-21"
-DefaultUser="jenkins"
+default_version_maven="3.9.12"
+default_version_jdk="jdk-21"
+default_locale="en_US.utf8"
+default_user="jenkins"
 
 label=''
-if [ $# -ge 1 ] && [ -n "$1" ]; then
+if [[ $# -ge 1 && -n "$1" ]]; then
 	label="$1"
 	echo "INFO: label of the node: '${label}'"
 fi
@@ -50,8 +52,8 @@ has_check() {
 echo "INFO: Optional checks bitmask: ${optional_checks}"
 
 # Allow Mark Waite to run the same script on his home network
-if [ -v JENKINS_ADVERTISED_HOSTNAME ]; then
-	DefaultUser="jagent"
+if [[ -v JENKINS_ADVERTISED_HOSTNAME ]]; then
+	default_user="jagent"
 fi
 
 failed=0
@@ -69,22 +71,22 @@ if test -e /proc/meminfo; then
 	cat /proc/meminfo
 fi
 
-if [[ "$(locale -a)" =~ ${DefaultLocale} ]]; then
-	echo "INFO: ${DefaultLocale} locale is available"
+if [[ "$(locale -a || true)" =~ ${default_locale} ]]; then
+	echo "INFO: ${default_locale} locale is available"
 else
-	echo "ERROR: ${DefaultLocale} locale is not available $(locale -a)"
+	echo "ERROR: ${default_locale} locale is not available $(locale -a)"
 	failed=$((failed + 1))
 fi
 
-if getent passwd ${DefaultUser} >/dev/null; then
-	echo "INFO: '${DefaultUser}' user exists"
+if getent passwd "${default_user}" >/dev/null; then
+	echo "INFO: '${default_user}' user exists"
 else
-	echo "ERROR: '${DefaultUser}' user does not exist"
+	echo "ERROR: '${default_user}' user does not exist"
 	failed=$((failed + 2))
 fi
 
-if [[ "$(whoami)" != "${DefaultUser}" ]]; then
-	echo "ERROR: Not running as '${DefaultUser}' user"
+if [[ "$(whoami || true)" != "${default_user}" ]]; then
+	echo "ERROR: Not running as '${default_user}' user"
 	echo "whoami: $(whoami)"
 	failed=$((failed + 4))
 fi
@@ -107,15 +109,18 @@ fi
 
 # Check for Maven CLI
 if has_check CHECK_MAVEN; then
-	mvn -v 2>/dev/null >/dev/null || {
+	maven_version="$(mvn -v || true)"
+	if [[ -n "${maven_version}" ]]; then
+		echo "INFO: command 'mvn -v' executed with success"
+	else
 		set +e
-		echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:";
-		echo "${PATH}";
-		which mvn;
-		mvn -v;
+		echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:"
+		echo "${PATH}"
+		which mvn
+		mvn -v
 		set -e
-		exit 1;
-	}
+		failed=$((failed + 32))
+	fi
 else
 	echo 'WARNING: "mvn -v" check skipped'
 fi
@@ -125,8 +130,8 @@ fi
 # Java 11 needs to include '11.' in the output
 # Java 17 needs to include '17.' in the output
 if has_check CHECK_JDK; then
-	if [ -n "${label}" ]; then
-		jdk="${DefaultJDKVersion}"
+	if [[ -n "${label}" ]]; then
+		jdk="${default_version_jdk}"
 		case "${label}" in
 			*maven-8 | *jdk-8 | *maven8)
 				jdk="jdk-8";;
@@ -142,29 +147,29 @@ if has_check CHECK_JDK; then
 				echo "INFO: Label '${label}' specified. Using default jdk."
 		esac
 
-		case ${jdk} in
+		case "${jdk}" in
 			jdk-8)
-				jdknumber="1.8";;
+				expected_jdk="1.8";;
 			jdk-11)
-				jdknumber="11.";;
+				expected_jdk="11.";;
 			jdk-17)
-				jdknumber="17.";;
+				expected_jdk="17.";;
 			jdk-21)
-				jdknumber="21";;
+				expected_jdk="21";;
 			jdk-25)
-				jdknumber="25";;
+				expected_jdk="25";;
 			*)
 				echo "ERROR: JDK not matching the expected ${jdk} for label '${label}'"
 				mvn -v 2>&1
 				failed=$((failed + 64))
 		esac
 
-		JDKfromMaven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
-		if [[ "${JDKfromMaven}" != *"${jdknumber}"* ]]; then
-			echo "ERROR: JDK from maven ${JDKfromMaven} not matching the expected ${jdknumber} for label '${label}'"
+		jdk_from_maven=$(mvn -v | grep "Java version" | cut -d " " -f 3 || true)
+		if [[ "${jdk_from_maven}" != *"${expected_jdk}"* ]]; then
+			echo "ERROR: JDK from maven ${jdk_from_maven} not matching the expected ${expected_jdk} for label '${label}'"
 			failed=$((failed + 64))
 		else
-			echo "INFO: JDK Version ok ${JDKfromMaven} for ${label}"
+			echo "INFO: JDK Version ok ${jdk_from_maven} for ${label}"
 		fi
 	fi
 else
@@ -172,11 +177,12 @@ else
 fi
 
 if has_check CHECK_MAVEN; then
-	if [[ "$(mvn -v 2>&1)" != *"${DefaultMavenVersion}"* ]]; then
-		echo "ERROR Maven version not matching what is expected : expecting ${DefaultMavenVersion} for label '${label}' found $(mvn -v 2>&1)"
+	maven_version="$(mvn -v || true)"
+	if [[ "${maven_version}" != *"${default_version_maven}"* ]]; then
+		echo "ERROR Maven version ${maven_version} does not match expected ${default_version_maven} default version for label '${label}'"
 		failed=$((failed + 128))
 	else
-		echo "INFO: Maven version ${DefaultMavenVersion} OK for label '${label}'"
+		echo "INFO: Maven version is matching the expected ${default_version_maven} version for label '${label}'"
 	fi
 else
 	echo 'WARNING: Expected Maven version check skipped'
@@ -184,17 +190,21 @@ fi
 
 # Docker check
 if has_check CHECK_DOCKER; then
-	docker info 2>/dev/null >/dev/null && echo "INFO: docker is present as expected from \"${label}\" label" || {
-		echo "ERROR: docker is not present as expected from \"${label}\" label, debugging informations below"
+	docker_info="$(docker info || true)"
+	if [[ -n "${docker_info}" ]]; then
+		echo "INFO: docker is present as expected from '${label}' label, see info below:"
+		echo "${docker_info}"
+	else
+		echo "ERROR: docker is not present as expected from '${label}' label, debugging informations below"
 		set +e
-		echo "${PATH}";
-		which docker;
-		docker info;
+		echo "${PATH}"
+		which docker
+		docker info
 		set -e
 		failed=$((failed + 256))
-	}
+	fi
 else
 	echo 'WARNING: Docker check skipped'
 fi
 
-exit ${failed}
+exit "${failed}"
