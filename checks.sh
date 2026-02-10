@@ -109,15 +109,18 @@ fi
 
 # Check for Maven CLI
 if has_check CHECK_MAVEN; then
-	mvn -v 2>/dev/null >/dev/null || {
+	maven_version="$(mvn -v || true)"
+	if [[ -n "${maven_version}" ]]; then
+		echo "INFO: command 'mvn -v' executed with success"
+	else
 		set +e
-		echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:";
-		echo "${PATH}";
-		which mvn;
-		mvn -v;
+		echo "ERROR: command 'mvn -v' failed to execute. Debugging informations below:"
+		echo "${PATH}"
+		which mvn
+		mvn -v
 		set -e
 		failed=$((failed + 32))
-	}
+	fi
 else
 	echo 'WARNING: "mvn -v" check skipped'
 fi
@@ -161,7 +164,7 @@ if has_check CHECK_JDK; then
 				failed=$((failed + 64))
 		esac
 
-		jdk_from_maven=$(mvn -v 2>&1 | grep "Java version" | cut -d " " -f 3)
+		jdk_from_maven=$(mvn -v | grep "Java version" | cut -d " " -f 3 || true)
 		if [[ "${jdk_from_maven}" != *"${expected_jdk}"* ]]; then
 			echo "ERROR: JDK from maven ${jdk_from_maven} not matching the expected ${expected_jdk} for label '${label}'"
 			failed=$((failed + 64))
@@ -174,7 +177,7 @@ else
 fi
 
 if has_check CHECK_MAVEN; then
-	maven_version="$(mvn -v 2>&1 || true)"
+	maven_version="$(mvn -v || true)"
 	if [[ "${maven_version}" != *"${default_version_maven}"* ]]; then
 		echo "ERROR Maven version ${maven_version} does not match expected ${default_version_maven} default version for label '${label}'"
 		failed=$((failed + 128))
@@ -187,7 +190,7 @@ fi
 
 # Docker check
 if has_check CHECK_DOCKER; then
-	docker_info="$(docker info 2>&1 || true)"
+	docker_info="$(docker info || true)"
 	if [[ -n "${docker_info}" ]]; then
 		echo "INFO: docker is present as expected from '${label}' label, see info below:"
 		echo "${docker_info}"
