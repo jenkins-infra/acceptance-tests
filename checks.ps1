@@ -51,6 +51,12 @@ if ($env:JENKINS_URL -eq 'https://trusted.ci.jenkins.io/') {
     }
 }
 
+# Exceptions for cert.ci.jenkins.io agents
+if ($env:JENKINS_URL -eq 'https://cert.ci.jenkins.io/') {
+    # Windows agents currently run as Administrator
+    $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Admin)
+}
+
 # Allow Mark Waite to run the same script on his home network
 if ($env:JENKINS_ADVERTISED_HOSTNAME) {
     $expectedDefaults.user = 'jagent'

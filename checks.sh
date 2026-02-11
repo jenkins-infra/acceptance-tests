@@ -45,6 +45,16 @@ if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
 	esac
 fi
 
+# Exceptions for cert.ci.jenkins.io agents
+if [[ "${JENKINS_URL:-}" == 'https://cert.ci.jenkins.io/' ]]; then
+	case "${label}" in
+		linux)
+			# Default JDK not as expected
+            optional_checks=$((optional_checks & ~CHECK_JDK));;
+		*)
+	esac
+fi
+
 has_check() {
     (( optional_checks & $1 ))
 }
