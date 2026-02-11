@@ -1,149 +1,54 @@
-parallel "linux": {
-  stage('Test default "linux" agent label with tools') {
-    node('linux') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-      
-      /** TODO: uncomment when adding JDK25
-      String jdk25 = tool name: "jdk-25", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk25}/bin", "JAVA_HOME=${jdk25}"]) {
-        sh 'mvn -v'
-      }
-      **/
-      
-      String jdk21 = tool name: "jdk21", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk21}/bin", "JAVA_HOME=${jdk21}"]) {
-        sh 'mvn -v'
-      }
+//!/usr/bin/env groovy
 
-      String jdk17 = tool name: "jdk17", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk17}/bin", "JAVA_HOME=${jdk17}"]) {
-        sh 'mvn -v'
-      }
+properties([
+    buildDiscarder(logRotator(numToKeepStr: '15')),
+    disableResume(),
+    durabilityHint('PERFORMANCE_OPTIMIZED'),
+    pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
+])
 
-      String jdk11 = tool name: "jdk11", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk11}/bin", "JAVA_HOME=${jdk11}"]) {
-        sh 'mvn -v'
-      }
-    
-      String jdk8 = tool name: "jdk8", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk8}/bin", "JAVA_HOME=${jdk8}"]) {
-          sh 'mvn -v'
-      }
-    }
-  }
-},
-"windows": {
-  stage('Test default "windows" agent label with tools') {
-    node('windows') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
+def categorizedLabels = [:]
 
-      /** TODO: uncomment when adding JDK25
-      String jdk25 = tool name: "jdk-25", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk25}/bin", "JAVA_HOME=${jdk25}"]) {
-        bat 'mvn -v'
-      }
-      **/
-      
-      String jdk21 = tool name: "jdk21", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk21}/bin", "JAVA_HOME=${jdk21}"]) {
-        bat 'mvn -v'
-      }
+// Labels currently used on cert.ci.jenkins.io (2026-02-11, see https://github.com/jenkins-infra/helpdesk/issues/4955#issuecomment-3883361394)
+// - linux-jdk-17
+// - linux-jdk-21
+// - linux-jdk-25
+// - windows-jdk-17
+// - windows-jdk-21
+// - windows-jdk-25
+// - linux
+// - windows
 
-      String jdk17 = tool name: "jdk17", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk17}/bin", "JAVA_HOME=${jdk17}"]) {
-        bat 'mvn -v'
-      }
 
-      String jdk11 = tool name: "jdk11", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk11}/bin", "JAVA_HOME=${jdk11}"]) {
-        bat 'mvn -v'
-      }
-    
-      String jdk8 = tool name: "jdk8", type: 'jdk'
-      withEnv(["PATH+JDK=${jdk8}/bin", "JAVA_HOME=${jdk8}"]) {
-        bat 'mvn -v'
-      }
+categorizedLabels['Maven and JDK'] = ['linux-jdk-17', 'linux-jdk-21', 'linux-jdk-25', 'windows-jdk-17', 'windows-jdk-21', 'windows-jdk-25']
+categorizedLabels['Others'] = ['linux', 'windows']
+
+// Generate a parallel step for each label
+def generateParallelSteps(categorizedLabels) {
+    def parallelNodes = [:]
+    categorizedLabels.each { categoryName, labels ->
+        labels.each { unboundLabel ->
+            def label = unboundLabel
+            def stageName = "${label} / ${categoryName}"
+            parallelNodes[stageName] = {
+                stage(stageName) {
+                    node(label) {
+                        withEnv(["NODE_LABEL=${label}"]) {
+                            checkout scm
+                            if (isUnix()) {
+                                sh 'bash ./checks.sh "${NODE_LABEL}"'
+                            } else {
+                                pwsh 'pwsh ./checks.ps1 -Label "${env:NODE_LABEL}"'
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
-},
-"ubuntu-22-amd64-maven-11": {
-  stage('Test specific "ubuntu-22-amd64-maven-11" agent label') {
-    node('ubuntu-22-amd64-maven-11') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"ubuntu-22-amd64-maven-17": {
-  stage('Test specific "ubuntu-22-amd64-maven-17" agent label') {
-    node('ubuntu-22-amd64-maven-17') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"ubuntu-22-amd64-maven-21": {
-  stage('Test specific "ubuntu-22-amd64-maven-21" agent label') {
-    node('ubuntu-22-amd64-maven-21') {
-      sh 'java -version'
-      sh 'mvn -v'
-      sh 'docker info'
-      sh 'cat /proc/cpuinfo'
-    }
-  }
-},
-"win-2019-amd64-maven-11": {
-  stage('Test specific "win-2019-amd64-maven-11" agent label') {
-    node('win-2019-amd64-maven-11') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2019-amd64-maven-17": {
-  stage('Test specific "win-2019-amd64-maven-17" agent label') {
-    node('win-2019-amd64-maven-17') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2019-amd64-maven-21": {
-  stage('Test specific "win-2019-amd64-maven-21" agent label') {
-    node('win-2019-amd64-maven-21') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
-},
-"win-2025-amd64-maven-25": {
-  stage('Test specific "win-2025-amd64-maven-25" agent label') {
-    node('win-2025-amd64-maven-25') {
-      bat 'java -version'
-      bat 'mvn -v'
-      bat 'docker info'
-      pwsh 'Get-CimInstance Win32_Processor | Out-String'
-      pwsh 'Get-ComputerInfo | Out-String'
-    }
-  }
+    return parallelNodes
+}
+
+timeout(unit: 'MINUTES', time: 29) {
+    parallel generateParallelSteps(categorizedLabels)
 }
