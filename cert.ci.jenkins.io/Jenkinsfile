@@ -10,17 +10,25 @@ properties([
 def categorizedLabels = [:]
 
 // Labels currently used on cert.ci.jenkins.io (2026-02-11, see https://github.com/jenkins-infra/helpdesk/issues/4955#issuecomment-3883361394)
+// - linux
+// - windows
+// - maven-17
+// - maven-21
+// - maven-25
+// - maven-17-windows
+// - maven-21-windows
+// - maven-25-windows
+
+// Used but not covered by current agent templates (?)
 // - linux-jdk-17
 // - linux-jdk-21
 // - linux-jdk-25
 // - windows-jdk-17
 // - windows-jdk-21
 // - windows-jdk-25
-// - linux
-// - windows
 
-
-categorizedLabels['Maven and JDK'] = ['linux-jdk-17', 'linux-jdk-21', 'linux-jdk-25', 'windows-jdk-17', 'windows-jdk-21', 'windows-jdk-25']
+categorizedLabels['Maven and JDK'] = ['maven-17', 'maven-21', 'maven-25', 'maven-17-windows', 'maven-21-windows', 'maven-25-windows']
+// categorizedLabels['Maven and JDK'] = ['linux-jdk-17', 'linux-jdk-21', 'linux-jdk-25', 'windows-jdk-17', 'windows-jdk-21', 'windows-jdk-25']
 categorizedLabels['Others'] = ['linux', 'windows']
 
 // Generate a parallel step for each label
