@@ -5,7 +5,7 @@ set -eux -o pipefail
 
 # A pull request can be used as validation for ci.jenkins.io when changing an agent template characteristics
 # See process following TDD principle mentioned at https://github.com/jenkins-infra/helpdesk/issues/4949#issuecomment-3755425511
-default_version_maven="3.9.12"
+default_version_maven="3.9.13"
 default_version_jdk="jdk-21"
 default_locale="en_US.utf8"
 default_user="jenkins"

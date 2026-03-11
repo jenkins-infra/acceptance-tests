@@ -13,7 +13,7 @@ Set-StrictMode -Version Latest
 $failed = 0
 $expectedDefaults = @{
     locale         = 'en-US'
-    mavenVersion   = '3.9.12'
+    mavenVersion   = '3.9.13'
     jdkVersion     = 21
     windowsVersion = 2025
     user           = 'jenkins'
