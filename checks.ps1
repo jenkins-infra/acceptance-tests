@@ -57,6 +57,15 @@ if ($env:JENKINS_URL -eq 'https://cert.ci.jenkins.io/') {
     $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Admin)
 }
 
+# Exceptions for infra.ci.jenkins.io agents
+if ($env:JENKINS_URL -eq 'https://infra.ci.jenkins.io/') {
+    # Windows agents currently run as Administrator
+    $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Admin)
+    # Windows agents are not building or running any java code
+    $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Jdk)
+    $optionalChecks = $optionalChecks -band (-bnot [OptionalCheck]::Maven)
+}
+
 # Allow Mark Waite to run the same script on his home network
 if ($env:JENKINS_ADVERTISED_HOSTNAME) {
     $expectedDefaults.user = 'jagent'

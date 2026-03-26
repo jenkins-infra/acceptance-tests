@@ -59,11 +59,8 @@ fi
 if [[ "${JENKINS_URL:-}" == 'https://infra.ci.jenkins.io/' ]]; then
 	case "${label}" in
 		linux*|jnlp*)
-			# Default JDK not as expected
+			# Agents are not building or running any java code
             optional_checks=$((optional_checks & ~CHECK_JDK));;
-		windows*)
-			# No JAVA_HOME defined
-            optional_checks=$((optional_checks & ~CHECK_JAVAHOME));;
 		*)
 	esac
 fi
