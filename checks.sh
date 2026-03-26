@@ -55,16 +55,6 @@ if [[ "${JENKINS_URL:-}" == 'https://cert.ci.jenkins.io/' ]]; then
 	esac
 fi
 
-# Exceptions for infra.ci.jenkins.io agents
-if [[ "${JENKINS_URL:-}" == 'https://infra.ci.jenkins.io/' ]]; then
-	case "${label}" in
-		linux*|jnlp*)
-			# Agents are not building or running any java code
-            optional_checks=$((optional_checks & ~CHECK_JDK));;
-		*)
-	esac
-fi
-
 has_check() {
     (( optional_checks & $1 ))
 }
