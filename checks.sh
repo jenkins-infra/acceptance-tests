@@ -55,6 +55,19 @@ if [[ "${JENKINS_URL:-}" == 'https://cert.ci.jenkins.io/' ]]; then
 	esac
 fi
 
+# Exceptions for infra.ci.jenkins.io agents
+if [[ "${JENKINS_URL:-}" == 'https://infra.ci.jenkins.io/' ]]; then
+	case "${label}" in
+		linux)
+			# Default JDK not as expected
+            optional_checks=$((optional_checks & ~CHECK_JDK));;
+		windows*)
+			# No JAVA_HOME defined
+            optional_checks=$((optional_checks & ~CHECK_JAVAHOME));;
+		*)
+	esac
+fi
+
 has_check() {
     (( optional_checks & $1 ))
 }
