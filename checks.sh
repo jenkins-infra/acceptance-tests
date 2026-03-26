@@ -55,6 +55,19 @@ if [[ "${JENKINS_URL:-}" == 'https://cert.ci.jenkins.io/' ]]; then
 	esac
 fi
 
+# Exceptions for infra.ci.jenkins.io agents
+if [[ "${JENKINS_URL:-}" == 'https://infra.ci.jenkins.io/' ]]; then
+	case "${label}" in
+		linux)
+			# "linux" Kubernetes agents don't have docker
+            optional_checks=$((optional_checks & ~CHECK_DOCKER));;
+		jnlp*)
+			# Kubernetes agents are set to JDK25 by default
+            optional_checks=$((optional_checks & ~CHECK_JDK));;
+		*)
+	esac
+fi
+
 has_check() {
     (( optional_checks & $1 ))
 }
