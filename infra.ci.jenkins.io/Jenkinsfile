@@ -1,0 +1,43 @@
+//!/usr/bin/env groovy
+
+properties([
+    buildDiscarder(logRotator(numToKeepStr: '15')),
+    disableResume(),
+    durabilityHint('PERFORMANCE_OPTIMIZED'),
+    pipelineTriggers([cron('H H/8 * * *')]), // Run once every 8 hours (three times a day)
+])
+
+def categorizedLabels = [:]
+
+categorizedLabels['ephemeral-agents'] = ['linux-amd64', 'linux-arm64', 'linux-arm64-nonspot', 'windows-2019', 'windows-2025']
+categorizedLabels['kubernetes-agents'] = ['linux', 'jnlp-linux-amd64', 'jnlp-linux-arm64']
+
+// Generate a parallel step for each label
+def generateParallelSteps(categorizedLabels) {
+    def parallelNodes = [:]
+    categorizedLabels.each { categoryName, labels ->
+        labels.each { unboundLabel ->
+            def label = unboundLabel
+            def stageName = "${label} / ${categoryName}"
+            parallelNodes[stageName] = {
+                stage(stageName) {
+                    node(label) {
+                        withEnv(["NODE_LABEL=${label}"]) {
+                            checkout scm
+                            if (isUnix()) {
+                                sh 'bash ./checks.sh "${NODE_LABEL}"'
+                            } else {
+                                pwsh 'pwsh ./checks.ps1 -Label "${env:NODE_LABEL}"'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return parallelNodes
+}
+
+timeout(unit: 'MINUTES', time: 29) {
+    parallel generateParallelSteps(categorizedLabels)
+}
