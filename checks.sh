@@ -58,7 +58,7 @@ fi
 # Exceptions for infra.ci.jenkins.io agents
 if [[ "${JENKINS_URL:-}" == 'https://infra.ci.jenkins.io/' ]]; then
 	case "${label}" in
-		linux)
+		linux*|jnlp*)
 			# Default JDK not as expected
             optional_checks=$((optional_checks & ~CHECK_JDK));;
 		windows*)
