@@ -133,12 +133,14 @@ if ($optionalChecks.HasFlag([OptionalCheck]::Admin)) {
 }
 
 # JAVA_HOME check
-if (-not $env:JAVA_HOME) {
-    Write-Host 'ERROR: JAVA_HOME environment variable is undefined'
-    $failed += 16
-}
-else {
-    Write-Host ('INFO: JAVA_HOME environment variable is defined: {0}' -f $env:JAVA_HOME)
+if ($optionalChecks.HasFlag([OptionalCheck]::Jdk)) {
+    if (-not $env:JAVA_HOME) {
+        Write-Host 'ERROR: JAVA_HOME environment variable is undefined'
+        $failed += 16
+    }
+    else {
+        Write-Host ('INFO: JAVA_HOME environment variable is defined: {0}' -f $env:JAVA_HOME)
+    }
 }
 
 # Maven CLI check
