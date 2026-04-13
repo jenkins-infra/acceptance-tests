@@ -47,3 +47,5 @@ def generateParallelSteps(categorizedLabels) {
 timeout(unit: 'MINUTES', time: 29) {
     parallel generateParallelSteps(categorizedLabels)
 }
+
+publishBuildStatusReport()
