@@ -48,4 +48,6 @@ timeout(unit: 'MINUTES', time: 29) {
     parallel generateParallelSteps(categorizedLabels)
 }
 
-publishBuildStatusReport()
+node('linux-arm64') {
+    publishBuildStatusReport()
+}
