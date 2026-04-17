@@ -47,7 +47,3 @@ def generateParallelSteps(categorizedLabels) {
 timeout(unit: 'MINUTES', time: 29) {
     parallel generateParallelSteps(categorizedLabels)
 }
-
-node('linux-arm64') {
-    publishBuildStatusReport()
-}
