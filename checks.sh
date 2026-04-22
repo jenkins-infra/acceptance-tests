@@ -23,6 +23,15 @@ CHECK_MAVEN=2
 CHECK_JDK=4
 CHECK_DOCKER=8
 
+# Controllers' specific checks
+CHECK_ACR_REACHABLE=16
+CHECK_MIRRORBITS_REACHABLE=32
+CHECK_ARCHIVES_SSH=64
+
+# Related variables
+acr_url_and_port="https://dockerhubmirror.azurecr.io"
+mirrorbits_url="updates.jenkins.io.privatelink.azurecr.io:3390"
+
 # Default optional checks
 optional_checks=$((CHECK_JAVAHOME | CHECK_MAVEN | CHECK_JDK))
 case "${label}" in
@@ -38,9 +47,9 @@ if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
 		docker|linux)
 			# Default JDK not as expected
             optional_checks=$((optional_checks & ~CHECK_JDK));;
-		updatecenter|agent-1)
-			# No optional check
-            optional_checks=$((CHECK_NONE));;
+		updatecenter|agent-1|agent-2)
+			# Specific checks (none of the default optional checks for the permanent agents)
+            optional_checks=$((CHECK_ACR_REACHABLE | CHECK_MIRRORBITS_REACHABLE | CHECK_ARCHIVES_SSH));;
 		*)
 	esac
 fi
@@ -231,4 +240,50 @@ else
 	echo 'WARNING: Docker check skipped'
 fi
 
+## Controllers' specific checks
+# Is the Azure Container Registry reachable?
+if has_check CHECK_ACR_REACHABLE; then
+	acr_reachable="$(curl -v -I "${acr_url_and_port}" 2>&1 | grep Received || true)"
+	if [[ -z "${acr_reachable}" ]]; then
+		echo "ERROR: Azure Container Registry is not reachable as expected for '${label}' label"
+		echo "URL checked: ${acr_url_and_port}"
+		failed=$((failed + 512))
+	else
+		echo "INFO: Azure Container Registry is reachable as expected for '${label}' label"
+	fi
+else
+	echo 'WARNING: Azure Container Registry reachability check skipped'
+fi
+
+# Is the Azure Container Registry reachable?
+if has_check CHECK_MIRRORBITS_REACHABLE; then
+	mirrorbits_reachable="$(curl -v -I "${mirrorbits_url}" 2>&1 | grep Received || true)"
+	if [[ -z "${mirrorbits_reachable}" ]]; then
+		echo "ERROR: mirrorbits is not reachable as expected for '${label}' label"
+		echo "URL checked: ${mirrorbits_url}"
+		failed=$((failed + 1024))
+	else
+		echo "INFO: mirrorbits is reachable as expected for '${label}' label"
+	fi
+else
+	echo 'WARNING: mirrorbits reachability check skipped'
+fi
+
+# Is the SSH connection to archives.jenkins.io possible?
+if has_check CHECK_ARCHIVES_SSH; then
+	# Checking that "Host key verification failed" or "Permission denied (publickey)" is returned (sufficient for this check)
+	archives_reachable="$(ssh -o BatchMode=yes -o ConnectTimeout=5 archives.jenkins.io exit 2>&1 | grep -e verification -e publickey || true)"
+	if [[ -z "${archives_reachable}" ]]; then
+		echo "ERROR: SSH connection to archives.jenkins.io not possible as expected for '${label}' label"
+		failed=$((failed + 2048))
+	else
+		echo "INFO: SSH connection to archives.jenkins.io possible as expected for '${label}' label"
+	fi
+else
+	echo 'WARNING: SSH connection to archives.jenkins.io check skipped'
+fi
+
+if [[ "${failed}" -gt 0 ]]; then
+	echo "Failure bitmask: ${failed}"
+fi
 exit "${failed}"
