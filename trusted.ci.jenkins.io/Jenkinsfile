@@ -26,7 +26,7 @@ def categorizedLabels = [:]
 
 categorizedLabels['Maven and JDK'] = ['maven-17', 'maven-25']
 categorizedLabels['Docker platforms'] = ['docker', 'linux', 'windows-2019', 'windows-2022', 'windows-2025']
-categorizedLabels['Permanent agents'] = ['agent-1', 'updatecenter']
+categorizedLabels['Permanent agents'] = ['agent-1', 'agent-2', 'updatecenter']
 
 // Generate a parallel step for each label
 def generateParallelSteps(categorizedLabels) {
