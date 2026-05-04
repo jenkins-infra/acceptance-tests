@@ -262,7 +262,7 @@ if ($Label) {
     }
 }
 
-# Docker check
+# Docker checks
 if ($optionalChecks.HasFlag([OptionalCheck]::Docker)) {
     try {
         $dockerInfo = (docker info) | Out-String
@@ -276,8 +276,20 @@ if ($optionalChecks.HasFlag([OptionalCheck]::Docker)) {
         $dockerInfo = (docker info) | Out-String
         $failed += 1024
     }
+    try {
+        $dockerBuildxInspect = (docker buildx inspect) | Out-String
+        Write-Host ('INFO: docker buildx is present as expected from "{0}" label, see the result of "docker buildx inspect" below:' -f $Label)
+        Write-Host $dockerBuildxInspect
+    }
+    catch {
+        Write-Host ('ERROR: docker buildx is not present as expected from "{0}" label, debugging informations below' -f $Label)
+        Write-Host $env:PATH
+        Get-Command docker -ErrorAction SilentlyContinue
+        $dockerInfo = (docker buildx inspect) | Out-String
+        $failed += 2048
+    }
 } else {
-    Write-Host 'WARNING: Docker check skipped'
+    Write-Host 'WARNING: Docker checks skipped'
 }
 
 exit $failed
