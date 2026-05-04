@@ -9,7 +9,7 @@ properties([
 
 def categorizedLabels = [:]
 
-categorizedLabels['ephemeral-agents'] = ['linux-amd64', 'linux-arm64', 'linux-arm64-nonspot', 'windows-2019', 'windows-2025']
+categorizedLabels['ephemeral-agents'] = ['linux-amd64', 'linux-arm64', 'linux-arm64-nonspot']
 categorizedLabels['kubernetes-agents'] = ['linux', 'jnlp-linux-amd64', 'jnlp-linux-arm64']
 
 // Generate a parallel step for each label
