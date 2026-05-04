@@ -221,7 +221,7 @@ else
 	echo 'WARNING: Expected Maven version check skipped'
 fi
 
-# Docker check
+# Docker checks
 if has_check CHECK_DOCKER; then
 	docker_info="$(docker info || true)"
 	if [[ -n "${docker_info}" ]]; then
@@ -236,8 +236,22 @@ if has_check CHECK_DOCKER; then
 		set -e
 		failed=$((failed + 256))
 	fi
+	docker_buildx_inspect="$(docker buildx inspect || true)"
+	if [[ -n "${docker_buildx_inspect}" ]]; then
+		echo "INFO: docker buildx is present as expected from '${label}' label, see the result of 'docker buildx inspect' below:"
+		echo "${docker_buildx_inspect}"
+	else
+		echo "ERROR: docker buildx is not present as expected from '${label}' label, debugging informations below"
+		set +e
+		echo "${PATH}"
+		which docker
+		docker info
+		docker buildx inspect
+		set -e
+		failed=$((failed + 256))
+	fi
 else
-	echo 'WARNING: Docker check skipped'
+	echo 'WARNING: Docker checks skipped'
 fi
 
 ## Controllers' specific checks
