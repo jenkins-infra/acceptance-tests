@@ -39,7 +39,8 @@ def generateParallelSteps(categorizedLabels, clusters) {
     }
     clusters.each { clusterName -> 
         parallelNodes[clusterName] = {
-            stage(clusterName) {
+            def stageName = "${clusterName} access"
+            stage(stageName) {
                 node('jnlp-linux-arm64') {
                     withCredentials([file(credentialsId: "kubeconfig-${clusterName}", variable: 'KUBECONFIG')]) {
                         sh 'kubectl cluster-info'
