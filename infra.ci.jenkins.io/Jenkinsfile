@@ -12,7 +12,7 @@ def categorizedLabels = [:]
 categorizedLabels['ephemeral-agents'] = ['linux-amd64', 'linux-arm64', 'linux-arm64-nonspot']
 categorizedLabels['kubernetes-agents'] = ['linux', 'jnlp-linux-amd64', 'jnlp-linux-arm64']
 
-def clusters = ['publick8s', 'privatek8s', 'privatek8s-sponsored', 'cijioagents2', 'infracijioagents1']
+def clusters = ['publick8s', 'privatek8s-sponsored', 'cijioagents2', 'infracijioagents1']
 
 // Generate a parallel step for each label
 def generateParallelSteps(categorizedLabels, clusters) {
