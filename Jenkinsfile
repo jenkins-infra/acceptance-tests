@@ -15,8 +15,8 @@ def categorizedLabels = [:]
 categorizedLabels['Maven and JDK'] = [ 'maven-8', 'maven-11', 'maven-17', 'maven-21', 'maven-25', 'maven-8-windows', 'maven-11-windows', 'maven-17-windows', 'maven-21-windows', 'maven-25-windows']
 categorizedLabels['VM Types'] = [ 'ubuntu-22-amd64-maven8', 'ubuntu-22-amd64-maven11', 'ubuntu-22-amd64-maven17', 'ubuntu-22-amd64-maven21', 'ubuntu-22-arm64-maven17', 'ubuntu-22-arm64-maven21', 'ubuntu-22-amd64-highmem-maven17']
 categorizedLabels['Linux Processors'] = [ 's390x', 'linux-amd64', 'linux-arm64']
-categorizedLabels['Docker Platforms'] = [ 's390xdocker', 'docker', 'docker-windows', 'arm64docker', 'windows-2019', 'windows-2022', 'windows-2025']
-categorizedLabels['Spot and OnDemand'] = [ 'docker-windows && spot', 'docker-windows && nonspot', 'docker && spot', 'docker && nonspot', 'docker-highmem-nonspot', 'docker-highmem && spot', 'docker-highmem && nonspot'] // Pipeline Library (mostly), but also Docker-*agent and Jenkins ATH
+categorizedLabels['Docker Platforms'] = [ 's390xdocker', 'docker', 'arm64docker', 'windows-2019', 'windows-2022', 'windows-2025']
+categorizedLabels['Spot and OnDemand'] = [ 'docker && spot', 'docker && nonspot', 'docker-highmem-nonspot', 'docker-highmem && spot', 'docker-highmem && nonspot'] // Pipeline Library (mostly), but also Docker-*agent and Jenkins ATH
 
 // Generate a parallel step for each label
 def generateParallelSteps(categorizedLabels) {
