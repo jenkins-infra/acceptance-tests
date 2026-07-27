@@ -9,11 +9,13 @@ properties([
 
 def categorizedLabels = [:]
 
-categorizedLabels['ephemeral-agents'] = ['linux-amd64', 'linux-arm64', 'linux-arm64-nonspot', 'windows-2019', 'windows-2025']
+categorizedLabels['ephemeral-agents'] = ['linux-amd64', 'linux-arm64', 'linux-arm64-nonspot']
 categorizedLabels['kubernetes-agents'] = ['linux', 'jnlp-linux-amd64', 'jnlp-linux-arm64']
 
+def clusters = ['publick8s', 'privatek8s-sponsored', 'cijioagents2', 'infracijioagents1']
+
 // Generate a parallel step for each label
-def generateParallelSteps(categorizedLabels) {
+def generateParallelSteps(categorizedLabels, clusters) {
     def parallelNodes = [:]
     categorizedLabels.each { categoryName, labels ->
         labels.each { unboundLabel ->
@@ -35,11 +37,24 @@ def generateParallelSteps(categorizedLabels) {
             }
         }
     }
+    clusters.each { clusterName -> 
+        parallelNodes[clusterName] = {
+            def stageName = "${clusterName} access"
+            stage(stageName) {
+                node('jnlp-linux-arm64') {
+                    withCredentials([file(credentialsId: "kubeconfig-${clusterName}", variable: 'KUBECONFIG')]) {
+                        sh 'kubectl cluster-info'
+                        sh 'kubectl get ns'
+                    }
+                }
+            }
+        }
+    }
     return parallelNodes
 }
 
 timeout(unit: 'MINUTES', time: 29) {
-    parallel generateParallelSteps(categorizedLabels)
+    parallel generateParallelSteps(categorizedLabels, clusters)
 }
 
 node('jnlp-linux-arm64') {
