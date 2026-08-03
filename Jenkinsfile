@@ -16,7 +16,7 @@ properties([
 ])
 
 // Define processors
-def Processors = [ "docker" ] // "s389xdocker" excluded because Docker DNS lookup fails in Debian container
+def Processors = [ "s390xdocker", "docker" ] // "arm64docker", "ppc64ledocker", excluded because test machine cannot download the jenkins package
 
 // Generate a parallel step for each label in labels
 def generateParallelSteps(labels) {
