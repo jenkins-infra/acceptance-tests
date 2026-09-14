@@ -12,7 +12,7 @@ properties([
 
 def categorizedLabels = [:]
 
-// Labels currently used on trusted.ci.jenkins.io (2026-02)
+// Labels currently used on trusted.ci.jenkins.io (2026-09)
 // - core-taglibs-report-generator: docker&&linux
 // - crawler: maven-17
 // - javadoc: linux
@@ -22,7 +22,7 @@ def categorizedLabels = [:]
 // - repository-permissions-updater: maven-25
 // - update-center-sync-recent-releases: updatecenter
 // - update_center: updatecenter
-// - docker controller & agents: linux, windows-2019, windows-2022, windows-2025
+// - docker controller & agents: linux, windows-2022, windows-2025
 
 categorizedLabels['Maven and JDK'] = ['maven-17', 'maven-25']
 categorizedLabels['Docker platforms'] = ['docker', 'linux', 'windows-2022', 'windows-2025']
