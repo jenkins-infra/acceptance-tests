@@ -22,10 +22,10 @@ def categorizedLabels = [:]
 // - repository-permissions-updater: maven-25
 // - update-center-sync-recent-releases: updatecenter
 // - update_center: updatecenter
-// - docker controller & agents: linux, windows-2022, windows-2025
+// - docker controller & agents: linux, windows-2025
 
 categorizedLabels['Maven and JDK'] = ['maven-17', 'maven-25']
-categorizedLabels['Docker platforms'] = ['docker', 'linux', 'windows-2022', 'windows-2025']
+categorizedLabels['Docker platforms'] = ['docker', 'linux', 'windows-2025']
 categorizedLabels['Permanent agents'] = ['agent-2', 'updatecenter', 'census']
 
 // Generate a parallel step for each label
