@@ -47,7 +47,7 @@ if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
 		docker|linux)
 			# Default JDK not as expected
             optional_checks=$((optional_checks & ~CHECK_JDK));;
-		updatecenter|agent-1|agent-2)
+		updatecenter)
 			# Specific checks (none of the default optional checks for the permanent agents)
             optional_checks=$((CHECK_ACR_REACHABLE | CHECK_MIRRORBITS_REACHABLE | CHECK_ARCHIVES_SSH));;
 		*)
