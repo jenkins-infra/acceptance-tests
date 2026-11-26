@@ -88,12 +88,14 @@ if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
             optional_checks=$((optional_checks & ~CHECK_JDK));;
 		updatecenter)
 			# Specific checks (none of the default optional checks for the permanent agents)
-            optional_checks=$((CHECK_ACR_REACHABLE | CHECK_MIRRORBITS_REACHABLE | CHECK_ARCHIVES_SSH));;
+            optional_checks=$((CHECK_ACR_REACHABLE | CHECK_MIRRORBITS_REACHABLE | CHECK_ARCHIVES_SSH))
+			# No Maven cache on permanents agents
+            optional_checks=$((optional_checks & ~CHECK_MAVEN_CACHE));;
+		agent-2|census)
+			# No Maven cache on permanents agents
+            optional_checks=$((optional_checks & ~CHECK_MAVEN_CACHE));;
 		*)
 	esac
-
-	# No Maven cache setup yet, pending https://github.com/jenkins-infra/helpdesk/issues/5365
-	optional_checks=$((optional_checks & ~CHECK_MAVEN_CACHE))
 fi
 
 has_check() {
