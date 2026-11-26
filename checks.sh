@@ -170,8 +170,8 @@ if has_check CHECK_MAVEN; then
 	if has_check CHECK_MAVEN_CACHE; then
 		mvn_local_repo="${HOME}/.m2/repository"
 		mvn_local_repo_files_count="$(find "${mvn_local_repo}" -type f | wc -l | tr -d ' ')"
-		mvn_local_repo_larger_than_one_gigabyte="$(du -sh "${mvn_local_repo}" | grep 'G' || true)"
-		if [[ -n "${mvn_local_repo_larger_than_one_gigabyte}" && "${mvn_local_repo_files_count}" -gt 0 ]]; then
+		mvn_local_repo_size_in_gb="$(du -sg "${mvn_local_repo}" | awk '{print $1}')"
+		if [[ "${mvn_local_repo_size_in_gb}" -gt 1 && "${mvn_local_repo_files_count}" -gt 10 ]]; then
 			echo "INFO: Maven local repo exists and is prepopulated"
 		else
 			set +e
