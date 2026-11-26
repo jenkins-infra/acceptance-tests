@@ -20,6 +20,7 @@ fi
 CHECK_NONE=0
 CHECK_JAVAHOME=1
 CHECK_MAVEN=2
+CHECK_MAVEN_CACHE=3
 CHECK_JDK=4
 CHECK_DOCKER=8
 
@@ -33,7 +34,7 @@ acr_url_and_port="https://dockerhubmirror.azurecr.io"
 mirrorbits_url="updates.jenkins.io.privatelink.azurecr.io:3390"
 
 # Default optional checks
-optional_checks=$((CHECK_JAVAHOME | CHECK_MAVEN | CHECK_JDK))
+optional_checks=$((CHECK_JAVAHOME | CHECK_MAVEN | CHECK_MAVEN_CACHE | CHECK_JDK))
 case "${label}" in
 	*docker*)
 		optional_checks=$((optional_checks | CHECK_DOCKER));;
@@ -41,15 +42,13 @@ case "${label}" in
 		optional_checks=$((optional_checks | CHECK_DOCKER));; # docker controller and agents
 	*)
 esac
-# Exceptions for trusted.ci.jenkins.io agents
-if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
+
+# Exceptions for ci.jenkins.io agents
+if [[ "${JENKINS_URL:-}" == 'https://ci.jenkins.io/' ]]; then
 	case "${label}" in
-		docker|linux)
-			# Default JDK not as expected
-            optional_checks=$((optional_checks & ~CHECK_JDK));;
-		updatecenter)
-			# Specific checks (none of the default optional checks for the permanent agents)
-            optional_checks=$((CHECK_ACR_REACHABLE | CHECK_MIRRORBITS_REACHABLE | CHECK_ARCHIVES_SSH));;
+		s390x*)
+			# No Maven cache on permanent s390x agent while it's managed by Puppet
+            optional_checks=$((optional_checks & ~CHECK_MAVEN_CACHE));;
 		*)
 	esac
 fi
@@ -74,6 +73,19 @@ if [[ "${JENKINS_URL:-}" == 'https://infra.ci.jenkins.io/' ]]; then
 			# Kubernetes agents don't have docker and are set to JDK25 by default
             optional_checks=$((optional_checks & ~CHECK_DOCKER))
             optional_checks=$((optional_checks & ~CHECK_JDK));;
+		*)
+	esac
+fi
+
+# Exceptions for trusted.ci.jenkins.io agents
+if [[ "${JENKINS_URL:-}" == 'https://trusted.ci.jenkins.io/' ]]; then
+	case "${label}" in
+		docker|linux)
+			# Default JDK not as expected
+            optional_checks=$((optional_checks & ~CHECK_JDK));;
+		updatecenter)
+			# Specific checks (none of the default optional checks for the permanent agents)
+            optional_checks=$((CHECK_ACR_REACHABLE | CHECK_MIRRORBITS_REACHABLE | CHECK_ARCHIVES_SSH));;
 		*)
 	esac
 fi
@@ -140,7 +152,7 @@ else
 	echo 'WARNING: JAVA_HOME check skipped'
 fi
 
-# Check for Maven CLI
+# Check for Maven CLI and Maven cache
 if has_check CHECK_MAVEN; then
 	maven_version="$(mvn -v || true)"
 	if [[ -n "${maven_version}" ]]; then
@@ -153,6 +165,24 @@ if has_check CHECK_MAVEN; then
 		mvn -v
 		set -e
 		failed=$((failed + 32))
+	fi
+
+	if has_check CHECK_MAVEN_CACHE; then
+		mvn_local_repo="${HOME}/.m2/repository"
+		mvn_local_repo_files_count="$(find "${mvn_local_repo}" -type f | wc -l | tr -d ' ')"
+        # Size in megabyte divided by 1024, rounded to the nearest integer
+		mvn_local_repo_size_in_gb="$(du -sm "${mvn_local_repo}" | awk '{printf "%.0f\n", $1/1024}')"
+		if [[ "${mvn_local_repo_size_in_gb}" -gt 1 && "${mvn_local_repo_files_count}" -gt 10 ]]; then
+			echo "INFO: Maven local repo exists and is prepopulated"
+		else
+			set +e
+			echo "ERROR: Maven local repo doesn't exist or is not prepopulated. Debugging informations below:"
+			echo "${mvn_local_repo}"
+			find "${mvn_local_repo}" -type f || true
+			du -sh "${mvn_local_repo}" || true
+			set -e
+			failed=$((failed + 32))
+		fi
 	fi
 else
 	echo 'WARNING: "mvn -v" check skipped'
