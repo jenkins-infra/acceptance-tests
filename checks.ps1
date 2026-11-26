@@ -163,7 +163,10 @@ if ($optionalChecks.HasFlag([OptionalCheck]::Maven)) {
     $mvnLocalRepo = Join-Path $HOME '.m2/repository'
     $mvnLocalRepoFiles = @(Get-ChildItem -Path $mvnLocalRepo -File -Recurse -ErrorAction SilentlyContinue)
     $mvnLocalRepoFilesCount = $mvnLocalRepoFiles.Count
-    $mvnLocalRepoSize = ($mvnLocalRepoFiles | Measure-Object -Property Length -Sum).Sum
+    $mvnLocalRepoSize = 0
+    foreach ($file in $mvnLocalRepoFiles) {
+        $mvnLocalRepoSize += $file.Length
+    }
     if ($mvnLocalRepoFilesCount -gt 10 -and $mvnLocalRepoSize -ge 1GB) {
         Write-Host 'INFO: Maven local repo exists and is prepopulated'
     } else {
