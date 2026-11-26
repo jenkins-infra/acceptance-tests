@@ -140,7 +140,7 @@ else
 	echo 'WARNING: JAVA_HOME check skipped'
 fi
 
-# Check for Maven CLI
+# Check for Maven CLI and Maven cache
 if has_check CHECK_MAVEN; then
 	maven_version="$(mvn -v || true)"
 	if [[ -n "${maven_version}" ]]; then
@@ -151,6 +151,21 @@ if has_check CHECK_MAVEN; then
 		echo "${PATH}"
 		which mvn
 		mvn -v
+		set -e
+		failed=$((failed + 32))
+	fi
+
+	mvn_local_repo="${HOME}/.m2/repository"
+	mvn_local_repo_files_count="$(find "${mvn_local_repo}" -type f | wc -l | tr -d ' ')"
+	mvn_local_repo_larger_than_one_gigabyte="$(du -sh "${mvn_local_repo}" | grep 'G' || true)"
+	if [[ -n "${mvn_local_repo_larger_than_one_gigabyte}" && "${mvn_local_repo_files_count}" -gt 0 ]]; then
+		echo "INFO: Maven local repo exists and is prepopulated"
+	else
+		set +e
+		echo "ERROR: Maven local repo doesn't exist or is not prepopulated. Debugging informations below:"
+		echo "${mvn_local_repo}"
+		find "${mvn_local_repo}" -type f || true
+		du -sh "${mvn_local_repo}" || true
 		set -e
 		failed=$((failed + 32))
 	fi

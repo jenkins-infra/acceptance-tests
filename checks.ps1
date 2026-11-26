@@ -143,7 +143,7 @@ if ($optionalChecks.HasFlag([OptionalCheck]::Jdk)) {
     }
 }
 
-# Maven CLI check
+# Maven CLI and Maven cache checks
 $mavenPresent = $false
 if ($optionalChecks.HasFlag([OptionalCheck]::Maven)) {
     $mvnOutput = ''
@@ -157,6 +157,20 @@ if ($optionalChecks.HasFlag([OptionalCheck]::Maven)) {
         Get-Command mvn -ErrorAction SilentlyContinue
         $mvnOutput = (mvn -v) | Out-String
         Write-Host $mvnOutput
+        $failed += 32
+    }
+
+    $mvnLocalRepo = Join-Path $HOME '.m2/repository'
+    $mvnLocalRepoFiles = @(Get-ChildItem -Path $mvnLocalRepo -File -Recurse -ErrorAction SilentlyContinue)
+    $mvnLocalRepoFilesCount = $mvnLocalRepoFiles.Count
+    $mvnLocalRepoSize = ($mvnLocalRepoFiles | Measure-Object -Property Length -Sum).Sum
+    if ($mvnLocalRepoFilesCount -gt 0 -and $mvnLocalRepoSize -ge 1GB) {
+        Write-Host 'INFO: Maven local repo exists and is prepopulated'
+    } else {
+        Write-Host 'ERROR: Maven local repo does not exist or is not prepopulated. Debugging informations below:'
+        Write-Host $mvnLocalRepo
+        $mvnLocalRepoFiles | Select-Object -ExpandProperty FullName
+        Write-Host "Size: $mvnLocalRepoSize bytes"
         $failed += 32
     }
 } else {
