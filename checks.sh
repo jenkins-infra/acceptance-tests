@@ -75,9 +75,6 @@ if [[ "${JENKINS_URL:-}" == 'https://infra.ci.jenkins.io/' ]]; then
             optional_checks=$((optional_checks & ~CHECK_JDK));;
 		*)
 	esac
-
-	# No Maven cache setup yet, pending https://github.com/jenkins-infra/helpdesk/issues/5365
-	optional_checks=$((optional_checks & ~CHECK_MAVEN_CACHE))
 fi
 
 # Exceptions for trusted.ci.jenkins.io agents
